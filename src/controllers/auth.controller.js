@@ -32,7 +32,7 @@ async function registerUserController(req, res){
     })
 
     const token = jwt.sign(
-        {id: suer._id, username: user.username},
+        { _id: suer._id, username: user.username},
         process.env.JWT-SpeechRecognitionAlternative,
         { expiresIn: "1d"}
     )
@@ -50,8 +50,48 @@ async function registerUserController(req, res){
  }
 
  /**
-  * 
+  * @name loginUserController
+  * @description login a user, expects email and password in the request body
+  * @access Public
   */
+
+ async function loginUserController(req, res){
+    const {email, password } = req.body
+    const user = await userModel.findOne({ email})
+
+    if (!user){
+        return res.status(400).json({
+            Message: " Invalid email or password "
+        })
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password)
+
+    if(!isPasswordValid){
+        return res.status(400).json({
+            message: "Invalid email or password"
+        })
+    }
+    const token = jwt.sign(
+        { id: user._id, username: user.username},
+        process.env.JWT_SECRET,
+        {expiresIn: "1d"}
+    )
+    res.cookie("token",token)
+    res.status(200).json({
+        message: "User loggedIn successfully.",
+        user:{
+            id: user._id,
+            suername: user.username,
+            email: user.email
+        }
+    })
+ }
+
+
+
 module.exports = {
-    registerUserController
+    registerUserController,
+    loginUserController
 }
+
