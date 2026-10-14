@@ -1,5 +1,17 @@
-const app = require('./src/app');
+require("dotenv").config();
+const express = require("express");
+const mongoose = require("mongoose");
+const dns = require("node:dns");
+dns.setServers(["8.8.8.8", "1.1.1.1"]);
 
-app.listen(3000,() =>{
-    console.log("server is running on port 3000")
-})
+const app = express();
+
+app.use(express.json());
+
+mongoose.connect(process.env.MONGO_URL)
+  .then(() => console.log("MongoDB connected successfully"))
+  .catch(err => console.error("MongoDB connection failed:", err.message));
+
+app.listen(3000, () => {
+  console.log("Server is running on port 3000");
+});
