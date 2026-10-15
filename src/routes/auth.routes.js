@@ -17,6 +17,6 @@ authRouter.post("/register", authController.registerUserController)
  * @access Public
  */
 
-authRouter.post("/api/login", authController.loginUserController)
+authRouter.post("/login", authController.loginUserController)
 
 module.exports = authRouter
