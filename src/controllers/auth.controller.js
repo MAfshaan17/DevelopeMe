@@ -33,7 +33,7 @@ async function registerUserController(req, res){
     })
 
     const token = jwt.sign(
-        { _id: suer._id, username: user.username},
+        { _id: user._id, username: user.username},
         process.env.JWT-SpeechRecognitionAlternative,
         { expiresIn: "1d"}
     )
