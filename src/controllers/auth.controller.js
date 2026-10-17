@@ -96,19 +96,30 @@ async function registerUserController(req, res){
     })
  }
 
- async function loginUserController(req, res) {
-    const token = req.cookies.token
+ async function logoutUserController(req, res) {
+    try {
+        const token = req.cookies?.token;
 
-    if(token){
-           await tokenBlackListModel.create({token})
+        if (token) {
+            await tokenBlackListModel.create({ token });
+        }
+
+        res.clearCookie("token", {
+            httpOnly: true,
+            secure: false,
+            sameSite: "lax"
+        });
+
+        return res.status(200).json({
+            message: "User logged out successfully"
+        });
+    } catch (err) {
+        console.error("Logout error:", err.message);
+        return res.status(500).json({
+            message: "Logout failed"
+        });
     }
-
-    res.clearCookie("token")
-
-    res.status(200).json({
-        message: " user logged out successfully"
-    })
- }
+}
 
 
 module.exports = {

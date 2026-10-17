@@ -3,10 +3,13 @@ const express = require("express");
 const mongoose = require("mongoose");
 const dns = require("node:dns");
 dns.setServers(["8.8.8.8", "1.1.1.1"]);
+const cookieParser = require("cookie-parser");
 
 const app = express();
 
 app.use(express.json());
+
+app.use(cookieParser());
 
 mongoose.connect(process.env.MONGO_URL)
   .then(() => console.log("MongoDB connected successfully"))
