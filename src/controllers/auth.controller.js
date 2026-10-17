@@ -34,9 +34,16 @@ async function registerUserController(req, res){
 
     const token = jwt.sign(
         { _id: user._id, username: user.username},
-        process.env.JWT-SpeechRecognitionAlternative,
+        process.env.JWT_SECRET,
         { expiresIn: "1d"}
     )
+    
+    res.cookie("token", token, {
+    httpOnly: true,
+    secure: false,       // Local HTTP development only
+    sameSite: "lax",
+    maxAge: 24 * 60 * 60 * 1000
+    });
 
     res.cookie("token", token)
     res.status(201).json({
