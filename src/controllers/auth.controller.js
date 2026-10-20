@@ -2,12 +2,15 @@ const userModel = require("../models/user.models")
 const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 const tokenBlackListModel = require("../models/blacklist.models")
+const cookieParser = require("cookie-parser");
 
 /**
  * @routes registerUserController
  * @description Register a new user, expects username, email and password in the request body
  * @access Public 
  */
+
+
 async function registerUserController(req, res){
     const { username, email, password} = req.body
     if(!username || !email || !password){
@@ -96,7 +99,7 @@ async function registerUserController(req, res){
     })
  }
 
- async function logoutUserController(req, res) {
+async function logoutUserController(req, res) {
     try {
         const token = req.cookies?.token;
 
@@ -124,6 +127,6 @@ async function registerUserController(req, res){
 
 module.exports = {
     registerUserController,
-    loginUserController
-}
-
+    loginUserController,
+    logoutUserController
+};
