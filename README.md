@@ -10,3 +10,4 @@ YES there are few things whichmust not be present but sti;; they are in this sor
 # This is not the main readme file i will update this when the project is over
 Building this project will take time cuz I am hard coding everything and yes we will make this a great project 
 
+The project backend is working must work on frontend that will take couple of hrs will finish this project soon. Let my internals get completed then surely will complete thsithing 
