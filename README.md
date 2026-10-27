@@ -1,12 +1,19 @@
-This project is for Improving my skills and analysis
-Full-Stack University Management Dashboard — JavaScript Mastery
-We will be using MERN stack to build this website and deploy it
+# Prepwise
 
+A calm, personal study dashboard for planning exam preparation. Prepwise currently includes a daily study plan, subject progress, a focus timer, practice-session planning, and a weekly progress view. Study tasks are saved in your browser, so the dashboard works before you connect an account.
 
-# Everything will be hard coded i am learner and i am learning from my mistakes and becoming a better engineer.
-YES there are few things whichmust not be present but sti;; they are in this sorry i am learning
+## Run locally
 
+1. Install the project dependencies with `npm install`.
+2. Configure `.env` with `PORT`, `MONGO_URL`, and `JWT_SECRET` to enable registration and sign-in.
+3. Start the server with `npm run dev`.
+4. Open [http://localhost:3000](http://localhost:3000).
 
-# This is not the main readme file i will update this when the project is over
-Building this project will take time cuz I am hard coding everything and yes we will make this a great project 
+The study dashboard can be explored without a database connection. Account registration, sign-in, and sign-out use the existing MongoDB-backed API.
 
+## API
+
+- `POST /api/auth/register` — create an account
+- `POST /api/auth/login` — sign in
+- `GET /api/auth/logout` — sign out
+- `GET /api/health` — check that the server is responding
