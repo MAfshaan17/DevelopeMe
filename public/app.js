@@ -1,19 +1,125 @@
 "use strict";
 
-const STORAGE_KEY = "prepwise.tasks.v1";
-const PROFILE_KEY = "prepwise.profile.v1";
-const DEFAULT_TASKS = [
-  { id: "seed-1", title: "Review cell biology notes", subject: "Biology", time: "9:00 AM", duration: 45, done: false, date: localDate() },
-  { id: "seed-2", title: "Practice quadratic equations", subject: "Mathematics", time: "11:00 AM", duration: 30, done: false, date: localDate() },
-  { id: "seed-3", title: "Read chapter 6: energy", subject: "Physics", time: "2:00 PM", duration: 45, done: false, date: localDate() }
+const TASKS_KEY = "prepwise.tasks.v2";
+const LEGACY_TASKS_KEY = "prepwise.tasks.v1";
+const SUBJECTS_KEY = "prepwise.subjects.v1";
+const CURRICULUM_IMPORT_KEY = "prepwise.curriculum-import.v1";
+const SESSIONS_KEY = "prepwise.sessions.v1";
+const PROFILE_KEY = "prepwise.student-profile.v1";
+const ACCOUNT_KEY = "prepwise.profile.v1";
+const PROFILE_DEFAULTS = {
+  name: "Mahammad Afshaan",
+  college: "JSS Science and Technology University, Mysuru",
+  course: "B.E. Computer Science and Business Systems (CSBS)",
+  semester: "5th semester",
+  focusAreas: "Agentic AI, LLM engineering, RAG, backend engineering, system design, deployment, DSA, core CS",
+  examDate: "",
+  weeklyGoal: "",
+  reminderTime: "19:00",
+  reminderEnabled: false,
+  github: "https://github.com/MAfshaan17",
+  linkedin: "https://www.linkedin.com/in/mahammad-afshaan05"
+};
+const SUBJECT_STYLES = [
+  { icon: "✳", color: "#897be8", background: "#f0efff" },
+  { icon: "◈", color: "#7fbda1", background: "#edf7f1" },
+  { icon: "◉", color: "#e5a56d", background: "#fff3e8" },
+  { icon: "⌬", color: "#62abb6", background: "#eaf7f7" },
+  { icon: "Aa", color: "#d18f9c", background: "#fbf0f3" },
+  { icon: "◷", color: "#c79656", background: "#fcf4e8" }
 ];
-const SUBJECTS = [
-  { name: "Biology", detail: "Cell biology · 4 chapters", icon: "✿", color: "#7fbda1", background: "#edf7f1", progress: 72 },
-  { name: "Mathematics", detail: "Algebra · 6 chapters", icon: "∑", color: "#897be8", background: "#f0efff", progress: 54 },
-  { name: "Physics", detail: "Mechanics · 5 chapters", icon: "◉", color: "#e5a56d", background: "#fff3e8", progress: 38 },
-  { name: "Chemistry", detail: "Organic · 3 chapters", icon: "⌬", color: "#62abb6", background: "#eaf7f7", progress: 86 },
-  { name: "English", detail: "Literature · 4 chapters", icon: "Aa", color: "#d18f9c", background: "#fbf0f3", progress: 61 },
-  { name: "History", detail: "Modern history · 5 units", icon: "◷", color: "#c79656", background: "#fcf4e8", progress: 45 }
+const CSBS_CURRICULUM = [
+  {
+    semester: 1,
+    sourcePage: 35,
+    courses: [
+      { code: "24CB110", name: "Discrete Mathematics", category: "PCC", lecture: 3, tutorial: 0, practical: 0, credits: 3 },
+      { code: "24CB120", name: "Statistics, Probability and Calculus", category: "BSC", lecture: 3, tutorial: 0, practical: 0, credits: 3 },
+      { code: "24CB130", name: "Fundamentals of Computer Science", category: "PCC", lecture: 3, tutorial: 0, practical: 2, credits: 4 },
+      { code: "24CB140", name: "Principles of Electrical Engineering", category: "ESC", lecture: 3, tutorial: 0, practical: 2, credits: 4 },
+      { code: "24CB150", name: "Physics for Computing Science", category: "BSC", lecture: 3, tutorial: 0, practical: 0, credits: 3 },
+      { code: "24CB160", name: "Business Communication & Value Science - I", category: "HSMC", lecture: 2, tutorial: 0, practical: 0, credits: 2 },
+      { code: "24HU110", name: "Kannada", category: "HSMC", lecture: 2, tutorial: 0, practical: 0, credits: null }
+    ]
+  },
+  {
+    semester: 2,
+    sourcePage: 36,
+    courses: [
+      { code: "24CB210", name: "Linear Algebra", category: "PCC", lecture: 3, tutorial: 0, practical: 0, credits: 3 },
+      { code: "24CB220", name: "Statistical Modelling", category: "BSC", lecture: 3, tutorial: 1, practical: 0, credits: 4 },
+      { code: "24CB230", name: "Data Structures & Algorithms", category: "PCC", lecture: 3, tutorial: 0, practical: 2, credits: 4 },
+      { code: "24CB240", name: "Principles of Electronics Engineering", category: "ESC", lecture: 3, tutorial: 0, practical: 2, credits: 4 },
+      { code: "24CB250", name: "Fundamentals of Economics", category: "HSMC", lecture: 2, tutorial: 0, practical: 0, credits: 2 },
+      { code: "24CB260", name: "Business Communication & Value Science - II", category: "HSMC", lecture: 2, tutorial: 0, practical: 0, credits: 2 }
+    ]
+  },
+  {
+    semester: 3,
+    sourcePage: 37,
+    courses: [
+      { code: "24MATDIP310", name: "Foundations of Engineering Mathematics-I", category: "BSC", lecture: 3, tutorial: 0, practical: 0, credits: null },
+      { code: "24CB310", name: "Formal Language & Automata Theory", category: "PCC", lecture: 3, tutorial: 1, practical: 0, credits: 4 },
+      { code: "24CB320", name: "Computer Organization & Architecture", category: "PCC", lecture: 3, tutorial: 1, practical: 0, credits: 4 },
+      { code: "24CB330", name: "Object Oriented Programming", category: "PCC", lecture: 3, tutorial: 0, practical: 2, credits: 4 },
+      { code: "24CB340", name: "Computational Statistics", category: "PCC", lecture: 3, tutorial: 0, practical: 2, credits: 4 },
+      { code: "24CB350", name: "Software Engineering", category: "PCC", lecture: 3, tutorial: 1, practical: 0, credits: 4 },
+      { code: "24CB360", name: "Financial & Cost Accounting", category: "HSMC", lecture: 4, tutorial: 0, practical: 0, credits: 4 },
+      { code: "24HU311", name: "Universal Human Values (UHV)-II", category: "HSMC", lecture: 2, tutorial: 0, practical: 0, credits: 2 }
+    ]
+  },
+  {
+    semester: 4,
+    sourcePage: 38,
+    courses: [
+      { code: "24MATDIP410", name: "Foundations of Engineering Mathematics-II", category: "BSC", lecture: 3, tutorial: 0, practical: 0, credits: null },
+      { code: "24CB410", name: "Operating Systems", category: "PCC", lecture: 3, tutorial: 0, practical: 2, credits: 4 },
+      { code: "24CB420", name: "Database Management Systems", category: "PCC", lecture: 3, tutorial: 0, practical: 2, credits: 4 },
+      { code: "24CB430", name: "Software Design with UML", category: "PCC", lecture: 3, tutorial: 0, practical: 0, credits: 3 },
+      { code: "24CB440", name: "Operations Research", category: "PCC", lecture: 3, tutorial: 1, practical: 0, credits: 4 },
+      { code: "24CB450", name: "Innovation, IP Management & Entrepreneurship", category: "HSMC", lecture: 2, tutorial: 0, practical: 0, credits: 2 },
+      { code: "24CB460", name: "Marketing Research & Marketing Management", category: "HSMC", lecture: 2, tutorial: 0, practical: 0, credits: 2 },
+      { code: "24CB470", name: "Business Communication & Value Science - III", category: "HSMC", lecture: 2, tutorial: 0, practical: 0, credits: 2 },
+      { code: "24HU412", name: "Environmental Studies", category: "HSMC/EV", lecture: 2, tutorial: 0, practical: 0, credits: 2 }
+    ]
+  },
+  {
+    semester: 5,
+    sourcePage: 39,
+    courses: [
+      { code: "24CB510", name: "Design and Analysis of Algorithms", category: "PCC", lecture: 3, tutorial: 0, practical: 2, credits: 4 },
+      { code: "24CB520", name: "Compiler Design", category: "PCC", lecture: 3, tutorial: 0, practical: 2, credits: 4 },
+      { code: "24CB530", name: "Fundamentals of Management", category: "HSMC", lecture: 3, tutorial: 0, practical: 0, credits: 3 },
+      { code: "24CB540", name: "Business Strategy", category: "HSMC", lecture: 3, tutorial: 0, practical: 0, credits: 3 },
+      { code: "24CB550", name: "Design Thinking", category: "PCC", lecture: 2, tutorial: 0, practical: 0, credits: 2 },
+      {
+        code: "24CB56x",
+        name: "Professional Elective-I",
+        category: "PEC",
+        lecture: 3,
+        tutorial: 0,
+        practical: 0,
+        credits: 3,
+        slot: true,
+        options: [
+          { code: "24CB561", name: "Conversational Systems" },
+          { code: "24CB562", name: "Cloud, Micro services & Application" },
+          { code: "24CB563", name: "Machine Learning" }
+        ]
+      },
+      {
+        code: "24CB57xOE",
+        name: "Open Elective-I",
+        category: "OEC",
+        lecture: 3,
+        tutorial: 0,
+        practical: 0,
+        credits: 3,
+        slot: true,
+        note: "The scheme lists the elective slot but does not identify your selected course."
+      }
+    ]
+  }
 ];
 
 function localDate(date = new Date()) {
@@ -23,25 +129,53 @@ function localDate(date = new Date()) {
   return `${year}-${month}-${day}`;
 }
 
-function readTasks() {
+function readCollection(key, validate, errorMessage) {
   try {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (!saved) return DEFAULT_TASKS.map((task) => ({ ...task }));
-    const tasks = JSON.parse(saved);
-    if (!Array.isArray(tasks) || !tasks.every((task) => task
-      && typeof task.id === "string"
-      && typeof task.title === "string"
-      && typeof task.subject === "string"
-      && typeof task.time === "string"
-      && typeof task.date === "string"
-      && typeof task.done === "boolean")) {
-      throw new Error("Saved study tasks are not valid.");
-    }
-    return tasks;
+    const saved = localStorage.getItem(key);
+    if (!saved) return [];
+    const items = JSON.parse(saved);
+    if (!Array.isArray(items) || !items.every(validate)) throw new Error(errorMessage);
+    return items;
   } catch (error) {
-    console.error("Could not load saved study tasks:", error);
-    showToast("Your saved tasks could not be loaded. A fresh plan is ready.");
-    return DEFAULT_TASKS.map((task) => ({ ...task }));
+    console.error(errorMessage, error);
+    showToast("Some saved study data could not be loaded.");
+    return [];
+  }
+}
+
+function isTask(task) {
+  return task
+    && typeof task.id === "string"
+    && typeof task.title === "string"
+    && typeof task.subject === "string"
+    && typeof task.time === "string"
+    && typeof task.date === "string"
+    && typeof task.done === "boolean";
+}
+
+function readTasks() {
+  if (localStorage.getItem(TASKS_KEY)) return readCollection(TASKS_KEY, isTask, "Saved study tasks are not valid.");
+  return readCollection(LEGACY_TASKS_KEY, isTask, "Saved study tasks are not valid.")
+    .filter((task) => !task.id.startsWith("seed-"));
+}
+
+function readProfile() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(PROFILE_KEY) || "null");
+    return saved && typeof saved === "object" ? { ...PROFILE_DEFAULTS, ...saved } : { ...PROFILE_DEFAULTS };
+  } catch (error) {
+    console.error("Could not load the saved student profile:", error);
+    return { ...PROFILE_DEFAULTS };
+  }
+}
+
+function readAccount() {
+  try {
+    const account = JSON.parse(localStorage.getItem(ACCOUNT_KEY) || "null");
+    return account && typeof account.username === "string" ? account : null;
+  } catch (error) {
+    console.error("Could not load the saved account:", error);
+    return null;
   }
 }
 
@@ -57,10 +191,15 @@ function escapeHtml(value) {
 
 const state = {
   tasks: readTasks(),
+  subjects: readCollection(SUBJECTS_KEY, (subject) => subject && typeof subject.id === "string" && typeof subject.name === "string" && typeof subject.progress === "number", "Saved subjects are not valid."),
+  sessions: readCollection(SESSIONS_KEY, (session) => session && typeof session.date === "string" && typeof session.minutes === "number", "Saved focus sessions are not valid."),
   filter: "all",
   currentView: "overview",
+  currentSemester: 5,
   authMode: "login",
+  editingSubjectId: null,
   profile: readProfile(),
+  account: readAccount(),
   secondsLeft: 25 * 60,
   timerDuration: 25 * 60,
   timerRunning: false,
@@ -68,23 +207,25 @@ const state = {
   timerInterval: null
 };
 
-function readProfile() {
+function persist(key, value, label) {
   try {
-    const profile = JSON.parse(localStorage.getItem(PROFILE_KEY) || "null");
-    return profile && typeof profile.username === "string" ? profile : null;
+    localStorage.setItem(key, JSON.stringify(value));
   } catch (error) {
-    console.error("Could not load the saved profile:", error);
-    return null;
+    console.error(`Could not save ${label}:`, error);
+    showToast("Your browser couldn't save this change. Check your storage settings.");
   }
 }
 
 function persistTasks() {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state.tasks));
-  } catch (error) {
-    console.error("Could not save study tasks:", error);
-    showToast("Your browser couldn't save this change. Check your storage settings.");
-  }
+  persist(TASKS_KEY, state.tasks, "study tasks");
+}
+
+function persistSubjects() {
+  persist(SUBJECTS_KEY, state.subjects, "subjects");
+}
+
+function persistSessions() {
+  persist(SESSIONS_KEY, state.sessions, "focus sessions");
 }
 
 function showToast(message) {
@@ -102,7 +243,36 @@ function todayTasks() {
 }
 
 function completedTasks() {
-  return state.tasks.filter((task) => task.done).length;
+  return state.tasks.filter((task) => task.done && task.completedAt && isThisWeek(task.completedAt)).length;
+}
+
+function mondayOfWeek(date = new Date()) {
+  const monday = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  monday.setDate(monday.getDate() - ((monday.getDay() + 6) % 7));
+  return localDate(monday);
+}
+
+function isThisWeek(dateString) {
+  return typeof dateString === "string" && dateString.slice(0, 10) >= mondayOfWeek() && dateString.slice(0, 10) <= localDate();
+}
+
+function sessionsThisWeek() {
+  return state.sessions.filter((session) => isThisWeek(session.date));
+}
+
+function activeDays() {
+  const dates = new Set([
+    ...state.sessions.map((session) => session.date),
+    ...state.tasks.filter((task) => task.done && task.completedAt).map((task) => task.completedAt.slice(0, 10))
+  ]);
+  let current = new Date();
+  if (!dates.has(localDate(current))) current.setDate(current.getDate() - 1);
+  let streak = 0;
+  while (dates.has(localDate(current))) {
+    streak += 1;
+    current.setDate(current.getDate() - 1);
+  }
+  return streak;
 }
 
 function timeInMinutes(time) {
@@ -116,27 +286,140 @@ function compareTasks(first, second) {
   return first.date.localeCompare(second.date) || timeInMinutes(first.time) - timeInMinutes(second.time);
 }
 
-function renderSubjects(targetId, limit = SUBJECTS.length) {
+function renderSubjects(targetId, limit = Number.POSITIVE_INFINITY) {
   const target = document.getElementById(targetId);
   if (!target) return;
-  target.innerHTML = SUBJECTS.slice(0, limit).map((subject) => `
-    <article class="subject-item" style="--subject-color:${subject.color}">
-      <div class="subject-top">
-        <span class="subject-icon" style="background:${subject.background};color:${subject.color}" aria-hidden="true">${subject.icon}</span>
-        <div><h3>${subject.name}</h3><p>${subject.detail}</p></div>
-      </div>
-      <div class="subject-progress-label"><span>Course progress</span><strong>${subject.progress}%</strong></div>
-      <div class="subject-progress" role="progressbar" aria-label="${subject.name} course progress" aria-valuenow="${subject.progress}" aria-valuemin="0" aria-valuemax="100"><span style="width:${subject.progress}%"></span></div>
-    </article>
-  `).join("");
+  const subjects = state.subjects.slice(0, limit);
+  target.innerHTML = subjects.length ? subjects.map((subject) => {
+    const style = SUBJECT_STYLES[subject.styleIndex % SUBJECT_STYLES.length];
+    const progress = subject.progressTracked === false
+      ? `<div class="subject-progress-label"><span>Progress tracking</span><strong>Not started</strong></div>`
+      : `<div class="subject-progress-label"><span>Your progress</span><strong>${subject.progress}%</strong></div>
+        <div class="subject-progress" role="progressbar" aria-label="${escapeHtml(subject.name)} progress" aria-valuenow="${subject.progress}" aria-valuemin="0" aria-valuemax="100"><span style="width:${subject.progress}%"></span></div>`;
+    return `
+      <article class="subject-item" style="--subject-color:${style.color}">
+        <div class="subject-top">
+          <span class="subject-icon" style="background:${style.background};color:${style.color}" aria-hidden="true">${style.icon}</span>
+          <div><h3>${escapeHtml(subject.name)}</h3><p>${escapeHtml(subject.detail || "Add a course note in your subject settings")}</p></div>
+          <button class="subject-edit" type="button" data-edit-subject="${escapeHtml(subject.id)}" aria-label="Edit ${escapeHtml(subject.name)}">✎</button>
+          <button class="subject-delete" type="button" data-delete-subject="${escapeHtml(subject.id)}" aria-label="Remove ${escapeHtml(subject.name)}">×</button>
+        </div>
+        ${progress}
+      </article>
+    `;
+  }).join("") : `<div class="empty-state"><span class="empty-state-icon">＋</span><h3>No subjects yet</h3><p>Add your current courses to organize your semester.</p><button class="button button-primary" type="button" data-add-subject>Add your first subject <span>→</span></button></div>`;
+}
+
+function profileSemesterNumber() {
+  const match = String(state.profile.semester || "").match(/\d+/);
+  return match ? Number(match[0]) : 5;
+}
+
+function renderCurriculum() {
+  const semester = CSBS_CURRICULUM.find((item) => item.semester === state.currentSemester);
+  if (!semester) return;
+  const currentSemester = profileSemesterNumber();
+  const status = semester.semester < currentSemester ? "Completed" : semester.semester === currentSemester ? "In progress" : "Upcoming";
+  const courseCount = semester.courses.filter((course) => !course.slot).length;
+  const electiveSlots = semester.courses.length - courseCount;
+  const knownCredits = semester.courses.reduce((total, course) => total + (course.credits || 0), 0);
+  const practicalHours = semester.courses.reduce((total, course) => total + course.practical, 0);
+  const subjectNames = new Set(state.subjects.map((subject) => subject.name.toLocaleLowerCase()));
+  const subjectCodes = new Set(state.subjects.map((subject) => subject.curriculumCode).filter(Boolean));
+  const tabs = document.getElementById("semester-tabs");
+  tabs.querySelectorAll("[data-semester]").forEach((tab) => {
+    const selected = Number(tab.dataset.semester) === semester.semester;
+    tab.classList.toggle("active", selected);
+    tab.setAttribute("aria-pressed", String(selected));
+  });
+  document.getElementById("curriculum-semester-title").textContent = `Semester ${["I", "II", "III", "IV", "V"][semester.semester - 1]}`;
+  document.getElementById("curriculum-semester-status").textContent = status;
+  document.getElementById("curriculum-semester-status").className = `semester-status status-${status.toLocaleLowerCase().replace(" ", "-")}`;
+  document.getElementById("curriculum-semester-summary").innerHTML = `
+    <span>${courseCount} courses${electiveSlots ? ` · ${electiveSlots} elective slots` : ""}</span>
+    <span>${knownCredits} scheduled credits${semester.courses.some((course) => course.credits === null) ? " · some rows have no credit value in the scheme" : ""}</span>
+    <span>${practicalHours} practical hours per week</span>`;
+  document.getElementById("curriculum-source").textContent = `Source: CSBS Scheme of Teaching and Assessment 2024-25, PDF page ${semester.sourcePage}. Practical hours are shown as P in the scheme; separate lab course titles are not listed here.`;
+  document.getElementById("curriculum-courses").innerHTML = semester.courses.map((course) => {
+    const options = course.options || [];
+    const actions = options.length
+      ? `<div class="elective-options">${options.map((option) => {
+        const alreadyAdded = subjectCodes.has(option.code) || subjectNames.has(option.name.toLocaleLowerCase());
+        return `<div class="elective-option"><span><strong>${escapeHtml(option.code)}</strong>${escapeHtml(option.name)}</span><button class="text-button curriculum-add-button" type="button" data-add-curriculum-course data-course-code="${escapeHtml(option.code)}" data-course-name="${escapeHtml(option.name)}"${alreadyAdded ? " disabled" : ""}>${alreadyAdded ? "Added" : "Add"}</button></div>`;
+      }).join("")}</div>`
+      : "";
+    const alreadyAdded = subjectCodes.has(course.code) || subjectNames.has(course.name.toLocaleLowerCase());
+    const addAction = course.slot
+      ? `<p class="course-note">${escapeHtml(course.note || "Choose the elective that you are taking before adding it to your subjects.")}</p>`
+      : `<button class="button button-quiet curriculum-add-button" type="button" data-add-curriculum-course data-course-code="${escapeHtml(course.code)}" data-course-name="${escapeHtml(course.name)}"${alreadyAdded ? " disabled" : ""}>${alreadyAdded ? "Already in my subjects" : "Add to my subjects"}</button>`;
+    return `
+      <article class="curriculum-course${course.slot ? " is-elective" : ""}">
+        <div class="curriculum-course-heading">
+          <div><span class="course-code">${escapeHtml(course.code)}</span><h3>${escapeHtml(course.name)}</h3></div>
+          <div class="course-tags"><span class="course-category">${escapeHtml(course.category)}</span><span class="course-credits">${course.credits === null ? "Credits not listed" : `${course.credits} credits`}</span></div>
+        </div>
+        <p class="course-hours">L ${course.lecture} · T ${course.tutorial} · P ${course.practical} hrs/week</p>
+        ${options.length ? `<p class="course-note">Options listed for this slot on PDF page 40. Your selection is not assumed.</p>${actions}` : ""}
+        ${course.slot && !options.length ? addAction : ""}
+        ${!course.slot ? addAction : ""}
+      </article>`;
+  }).join("");
+}
+
+function importCurrentSemesterSubjects() {
+  if (localStorage.getItem(CURRICULUM_IMPORT_KEY) === "done") return;
+  const semester = CSBS_CURRICULUM.find((item) => item.semester === profileSemesterNumber());
+  if (!semester) return;
+  const names = new Set(state.subjects.map((subject) => subject.name.toLocaleLowerCase()));
+  const codes = new Set(state.subjects.map((subject) => subject.curriculumCode).filter(Boolean));
+  const additions = semester.courses
+    .filter((course) => !course.slot && !codes.has(course.code) && !names.has(course.name.toLocaleLowerCase()))
+    .map((course, index) => ({
+      id: `curriculum-${course.code}`,
+      name: course.name,
+      detail: course.code,
+      progress: 0,
+      progressTracked: false,
+      curriculumCode: course.code,
+      styleIndex: (state.subjects.length + index) % SUBJECT_STYLES.length
+    }));
+  if (additions.length) state.subjects.push(...additions);
+  try {
+    localStorage.setItem(SUBJECTS_KEY, JSON.stringify(state.subjects));
+    localStorage.setItem(CURRICULUM_IMPORT_KEY, "done");
+  } catch (error) {
+    console.error("Could not save the current semester courses:", error);
+    showToast("Your semester courses could not be saved in this browser.");
+  }
 }
 
 function renderOverview() {
   const completed = completedTasks();
-  document.getElementById("tasks-completed").textContent = String(6 + completed);
-  document.getElementById("weekly-goal-label").textContent = `${6 + completed} / 10`;
-  document.getElementById("weekly-goal-bar").style.width = `${Math.min(100, (6 + completed) * 10)}%`;
+  const weeklyGoal = Number(state.profile.weeklyGoal) || 0;
+  const weeklySessions = sessionsThisWeek();
+  const focusMinutes = weeklySessions.reduce((total, session) => total + session.minutes, 0);
+  const streak = activeDays();
+  document.getElementById("weekly-hours").textContent = (focusMinutes / 60).toFixed(1);
+  document.getElementById("tasks-completed").textContent = String(completed);
+  document.getElementById("weekly-goal-label").textContent = weeklyGoal ? `${completed} / ${weeklyGoal}` : "Set a goal";
+  document.getElementById("weekly-goal-bar").style.width = weeklyGoal ? `${Math.min(100, completed / weeklyGoal * 100)}%` : "0%";
   document.getElementById("task-count").textContent = String(todayTasks().filter((task) => !task.done).length);
+  document.getElementById("current-streak").textContent = String(streak);
+  document.getElementById("streak-value").textContent = String(streak);
+  document.getElementById("streak-caption").textContent = streak === 1 ? "day of activity in a row" : "consecutive active days";
+  document.getElementById("streak-card-title").textContent = streak ? "Your study streak" : "Start your streak";
+  document.getElementById("streak-card-caption").textContent = streak ? `${streak} active ${streak === 1 ? "day" : "days"} — keep it up.` : "Complete a task or focus session.";
+
+  const countdown = document.getElementById("exam-countdown");
+  if (state.profile.examDate) {
+    const daysLeft = Math.ceil((new Date(`${state.profile.examDate}T00:00:00`) - new Date(`${localDate()}T00:00:00`)) / 86400000);
+    countdown.innerHTML = `<div class="countdown-number">${Math.max(0, daysLeft)}</div><div class="countdown-label">${daysLeft < 0 ? "DAYS SINCE EXAM" : "DAYS TO GO"}</div><div class="countdown-caption">${escapeHtml(new Date(`${state.profile.examDate}T00:00:00`).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" }))}</div>`;
+  } else {
+    countdown.innerHTML = '<button class="exam-date-button" type="button" data-open-profile>Set exam date <span>→</span></button><div class="countdown-caption">Add your next exam to get a countdown.</div>';
+  }
+  document.getElementById("college-name").textContent = state.profile.college || "Add your college details";
+  document.getElementById("college-course").textContent = [state.profile.course, state.profile.semester].filter(Boolean).join(" · ") || "Add your degree and semester";
+  renderSocialLinks();
 
   const schedule = document.getElementById("today-schedule");
   const upcoming = todayTasks().slice().sort(compareTasks);
@@ -148,6 +431,20 @@ function renderOverview() {
     </div>
   `).join("") : '<p class="empty-plan">Your day is clear. Add a task when you’re ready.</p>';
   renderSubjects("overview-subjects", 4);
+  renderMiniWeekBars(weeklySessions);
+  const active = new Set([
+    ...state.sessions.map((session) => session.date),
+    ...state.tasks.filter((task) => task.done && task.completedAt).map((task) => task.completedAt.slice(0, 10))
+  ]);
+  const monday = new Date();
+  monday.setDate(monday.getDate() - ((monday.getDay() + 6) % 7));
+  document.getElementById("streak-week").innerHTML = Array.from({ length: 7 }, (_, index) => {
+    const day = new Date(monday);
+    day.setDate(monday.getDate() + index);
+    const date = localDate(day);
+    const label = new Intl.DateTimeFormat(undefined, { weekday: "narrow" }).format(day);
+    return `<span class="streak-day${active.has(date) ? " done" : ""}${date === localDate() ? " today" : ""}" aria-label="${escapeHtml(new Intl.DateTimeFormat(undefined, { weekday: "long", month: "short", day: "numeric" }).format(day))}${active.has(date) ? ": activity recorded" : ": no activity recorded"}">${escapeHtml(label)}</span>`;
+  }).join("");
 }
 
 function renderPlan() {
@@ -177,56 +474,164 @@ function renderPlan() {
 }
 
 function renderPractice() {
-  document.getElementById("practice-subjects").innerHTML = SUBJECTS.map((subject) => `
-    <article class="practice-card">
-      <div class="practice-card-top"><span class="subject-icon" style="background:${subject.background};color:${subject.color}" aria-hidden="true">${subject.icon}</span><div><h3>${subject.name}</h3><p>${subject.progress}% of your course reviewed</p></div></div>
-      <button class="button button-quiet" type="button" data-practice-subject="${subject.name}">Plan a ${subject.name} recap <span>→</span></button>
-    </article>
-  `).join("");
+  const practice = document.getElementById("practice-subjects");
+  practice.innerHTML = state.subjects.length ? state.subjects.map((subject) => {
+    const style = SUBJECT_STYLES[subject.styleIndex % SUBJECT_STYLES.length];
+    return `
+      <article class="practice-card">
+        <div class="practice-card-top"><span class="subject-icon" style="background:${style.background};color:${style.color}" aria-hidden="true">${style.icon}</span><div><h3>${escapeHtml(subject.name)}</h3><p>Plan a practice session for this course.</p></div></div>
+        <button class="button button-quiet" type="button" data-practice-subject="${escapeHtml(subject.id)}">Plan a ${escapeHtml(subject.name)} recap <span>→</span></button>
+      </article>
+    `;
+  }).join("") : '<div class="empty-state"><span class="empty-state-icon">＋</span><h3>No courses to practice yet</h3><p>Add your subjects first, then plan a practice session for any course.</p><button class="button button-primary" type="button" data-add-subject>Add a subject <span>→</span></button></div>';
 }
 
 function renderProgress() {
   const done = completedTasks();
+  const weeklySessions = sessionsThisWeek();
+  const focusMinutes = weeklySessions.reduce((total, session) => total + session.minutes, 0);
+  const streak = activeDays();
   const stats = document.getElementById("progress-stats");
   stats.innerHTML = `
-    <article class="stat-card"><div class="stat-top"><span class="stat-icon stat-icon-lavender">◷</span><span class="stat-trend">THIS WEEK</span></div><div class="stat-value">${(8.5 + done * 0.5).toFixed(1)}<small>hrs</small></div><div class="stat-caption">Time invested in your goals</div></article>
-    <article class="stat-card"><div class="stat-top"><span class="stat-icon stat-icon-mint">✓</span><span class="stat-trend trend-green">KEEP IT UP</span></div><div class="stat-value">${6 + done}<small>tasks</small></div><div class="stat-caption">Small wins add up to big progress</div></article>
-    <article class="stat-card"><div class="stat-top"><span class="stat-icon stat-icon-peach">✳</span><span class="stat-trend">YOUR BEST: 9 DAYS</span></div><div class="stat-value">4<small>day streak</small></div><div class="stat-caption">A new day to show up for yourself</div></article>`;
-  const chart = document.getElementById("week-chart");
-  const days = [
-    { day: "Mon", hours: 2 },
-    { day: "Tue", hours: 3.5 },
-    { day: "Wed", hours: 2.5 },
-    { day: "Thu", hours: 4 },
-    { day: "Fri", hours: 1.5 },
-    { day: "Sat", hours: 3 },
-    { day: "Sun", hours: 1 }
-  ];
-  chart.innerHTML = days.map((item, index) => `
-    <div class="chart-day" aria-label="${item.day}: ${item.hours} hours">
-      <span class="chart-value">${item.hours}h</span><div class="chart-bar-track"><span class="chart-bar${index === 3 ? " today" : ""}" style="height:${item.hours / 4 * 100}%"></span></div><span class="chart-label">${item.day}</span>
-    </div>`).join("");
+    <article class="stat-card"><div class="stat-top"><span class="stat-icon stat-icon-lavender">◷</span><span class="stat-trend">THIS WEEK</span></div><div class="stat-value">${(focusMinutes / 60).toFixed(1)}<small>hrs</small></div><div class="stat-caption">Recorded focus time</div></article>
+    <article class="stat-card"><div class="stat-top"><span class="stat-icon stat-icon-mint">✓</span><span class="stat-trend trend-green">THIS WEEK</span></div><div class="stat-value">${done}<small>tasks</small></div><div class="stat-caption">Tasks you marked complete</div></article>
+    <article class="stat-card"><div class="stat-top"><span class="stat-icon stat-icon-peach">✳</span><span class="stat-trend">FROM YOUR ACTIVITY</span></div><div class="stat-value">${streak}<small>${streak === 1 ? "day" : "days"} streak</small></div><div class="stat-caption">${streak ? "Consecutive active days" : "Complete a task or focus session to start"}</div></article>`;
+  renderWeekBars("week-chart", weeklySessions);
   renderSubjects("progress-subjects", 4);
+}
+
+function renderWeekBars(targetId, sessions) {
+  const chart = document.getElementById(targetId);
+  if (!chart) return;
+  const monday = new Date();
+  monday.setDate(monday.getDate() - ((monday.getDay() + 6) % 7));
+  const days = Array.from({ length: 7 }, (_, index) => {
+    const date = new Date(monday);
+    date.setDate(monday.getDate() + index);
+    const dateKey = localDate(date);
+    const minutes = sessions.filter((session) => session.date === dateKey).reduce((total, session) => total + session.minutes, 0);
+    return { label: new Intl.DateTimeFormat(undefined, { weekday: "short" }).format(date), minutes, date: dateKey };
+  });
+  const maxMinutes = Math.max(...days.map((day) => day.minutes), 25);
+  chart.innerHTML = days.map((day) => `
+    <div class="chart-day" aria-label="${day.label}: ${day.minutes} minutes">
+      <span class="chart-value">${day.minutes ? `${day.minutes}m` : "—"}</span><div class="chart-bar-track"><span class="chart-bar${day.date === localDate() ? " today" : ""}" style="height:${day.minutes ? day.minutes / maxMinutes * 100 : 0}%"></span></div><span class="chart-label">${day.label}</span>
+    </div>`).join("");
+}
+
+function renderMiniWeekBars(sessions) {
+  const chart = document.getElementById("week-mini-bars");
+  if (!chart) return;
+  const monday = new Date();
+  monday.setDate(monday.getDate() - ((monday.getDay() + 6) % 7));
+  const days = Array.from({ length: 7 }, (_, index) => {
+    const date = new Date(monday);
+    date.setDate(monday.getDate() + index);
+    const dateKey = localDate(date);
+    return {
+      date: dateKey,
+      label: new Intl.DateTimeFormat(undefined, { weekday: "long" }).format(date),
+      minutes: sessions.filter((session) => session.date === dateKey).reduce((total, session) => total + session.minutes, 0)
+    };
+  });
+  const maxMinutes = Math.max(...days.map((day) => day.minutes), 1);
+  chart.innerHTML = days.map((day) => `<i title="${escapeHtml(day.label)}: ${day.minutes} minutes" aria-label="${escapeHtml(day.label)}: ${day.minutes} minutes"${day.date === localDate() ? ' class="bar-today"' : ""} style="height:${day.minutes ? Math.max(12, day.minutes / maxMinutes * 100) : 4}%"></i>`).join("");
+}
+
+function profileLink(value, label, domain) {
+  const link = normalizeProfileUrl(value, domain);
+  return link ? `<a href="${escapeHtml(link)}" target="_blank" rel="noopener noreferrer">${label} ↗</a>` : "";
+}
+
+function normalizeProfileUrl(value, domain) {
+  const trimmed = String(value || "").trim();
+  if (!trimmed) return "";
+  try {
+    const url = new URL(/^[a-z][a-z\d+.-]*:/i.test(trimmed) ? trimmed : `https://${trimmed}`);
+    if (url.protocol !== "https:" && url.protocol !== "http:") return "";
+    if (url.hostname !== domain && !url.hostname.endsWith(`.${domain}`)) return "";
+    return url.href;
+  } catch {
+    return "";
+  }
+}
+
+function renderSocialLinks() {
+  const links = [
+    profileLink(state.profile.github, "GitHub", "github.com"),
+    profileLink(state.profile.linkedin, "LinkedIn", "linkedin.com")
+  ].filter(Boolean);
+  document.getElementById("student-links").innerHTML = links.length ? links.join("") : '<button type="button" class="inline-link" data-open-profile>Add your profile links</button>';
+}
+
+function renderFocusAreas() {
+  const areas = String(state.profile.focusAreas || "").split(",").map((area) => area.trim()).filter(Boolean);
+  document.getElementById("focus-areas").innerHTML = areas.length
+    ? areas.map((area) => `<span class="focus-area-chip">${escapeHtml(area)}</span>`).join("")
+    : '<button type="button" class="inline-link" data-open-profile>Add your focus areas</button>';
 }
 
 function renderAll() {
   renderOverview();
   renderPlan();
   renderSubjects("all-subjects");
+  renderCurriculum();
   renderPractice();
   renderProgress();
   updateProfile();
+  renderFocusAreas();
+}
+
+function reminderMessage() {
+  const firstName = state.profile.name.trim().split(/\s+/)[0] || "Afshaan";
+  const subject = state.subjects[0]?.name;
+  return {
+    title: `Study time, ${firstName}`,
+    body: subject ? `Your ${subject} notes are ready. A small session is a good start.` : "Take a few minutes for your CSBS goals. You can add today's study task in Prepwise."
+  };
+}
+
+function checkDailyReminder() {
+  if (!state.profile.reminderEnabled || !state.profile.reminderTime || !("Notification" in window) || Notification.permission !== "granted") return;
+  const now = new Date();
+  const currentTime = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+  if (currentTime < state.profile.reminderTime) return;
+  const reminderDate = localDate(now);
+  if (state.profile.lastReminderDate === reminderDate) return;
+  const reminder = reminderMessage();
+  new Notification(reminder.title, { body: reminder.body, tag: `prepwise-daily-${reminderDate}` });
+  state.profile.lastReminderDate = reminderDate;
+  persist(PROFILE_KEY, state.profile, "student profile");
+}
+
+async function enableDailyReminder() {
+  if (!("Notification" in window)) {
+    showToast("This browser doesn't support desktop notifications.");
+    return false;
+  }
+  if (Notification.permission === "denied") {
+    showToast("Notifications are blocked for this site. Allow them in your browser settings first.");
+    return false;
+  }
+  if (Notification.permission !== "granted") {
+    const permission = await Notification.requestPermission();
+    if (permission !== "granted") {
+      showToast("Allow notifications in your browser to turn on your daily reminder.");
+      return false;
+    }
+  }
+  return true;
 }
 
 function updateProfile() {
-  const username = state.profile?.username || "Alex Morgan";
+  const username = state.profile.name || state.account?.username || "Student";
   const hour = new Date().getHours();
   const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
-  const initials = username.trim().split(/\s+/).slice(0, 2).map((part) => part[0]).join("").toUpperCase() || "A";
+  const initials = username === "Student" ? "＋" : username.trim().split(/\s+/).slice(0, 2).map((part) => part[0]).join("").toUpperCase();
   document.getElementById("profile-name").textContent = username;
-  document.getElementById("profile-status").textContent = state.profile ? "Signed in · Sign out" : "Your study space";
+  document.getElementById("profile-status").textContent = state.account ? "Account connected" : "Your study space";
   document.getElementById("avatar-initials").textContent = initials;
-  document.getElementById("welcome-title").innerHTML = `${greeting}, ${escapeHtml(username.split(/\s+/)[0])} <span class="wave">✳</span>`;
+  document.getElementById("welcome-title").innerHTML = `${greeting}${username === "Student" ? "" : `, ${escapeHtml(username.split(/\s+/)[0])}`} <span class="wave">✳</span>`;
 }
 
 function changeView(view) {
@@ -240,22 +645,82 @@ function changeView(view) {
   document.title = `${heading.textContent} — Prepwise`;
   document.getElementById("sidebar").classList.remove("open");
   if (view === "plan") renderPlan();
+  if (view === "curriculum") renderCurriculum();
 }
 
-function openTaskDialog(subject = "") {
-  const select = document.getElementById("task-subject");
-  select.innerHTML = SUBJECTS.map((item) => `<option value="${item.name}"${item.name === subject ? " selected" : ""}>${item.name}</option>`).join("");
+function openTaskDialog(subject = "", title = "") {
+  const options = document.getElementById("subject-options");
+  options.innerHTML = state.subjects.map((item) => `<option value="${escapeHtml(item.name)}"></option>`).join("");
+  document.getElementById("task-subject").value = subject;
+  document.getElementById("task-title").value = title;
+  document.getElementById("task-date").value = localDate();
+  document.getElementById("task-time").value = "";
+  document.getElementById("task-duration").value = "25";
   const dialog = document.getElementById("task-dialog");
   dialog.showModal();
   document.getElementById("task-title").focus();
+}
+
+function openSubjectDialog(subjectId = "") {
+  const form = document.getElementById("subject-form");
+  form.reset();
+  state.editingSubjectId = subjectId;
+  const subject = state.subjects.find((item) => item.id === subjectId);
+  document.getElementById("subject-dialog-title").textContent = subject ? "Edit subject" : "Add a subject";
+  document.getElementById("subject-submit-label").innerHTML = `${subject ? "Save changes" : "Add subject"} <span>→</span>`;
+  document.getElementById("subject-name").value = subject?.name || "";
+  document.getElementById("subject-detail").value = subject?.detail || "";
+  document.getElementById("subject-progress-input").value = String(subject?.progress ?? 0);
+  document.getElementById("subject-progress-value").textContent = `${subject?.progress ?? 0}%`;
+  document.getElementById("subject-dialog").showModal();
+  document.getElementById("subject-name").focus();
+}
+
+function addCurriculumCourse(code, name) {
+  if (state.subjects.some((subject) => subject.curriculumCode === code || subject.name.toLocaleLowerCase() === name.toLocaleLowerCase())) {
+    showToast(`${name} is already in your subjects.`);
+    return;
+  }
+  state.subjects.push({
+    id: `curriculum-${code}`,
+    name,
+    detail: code,
+    progress: 0,
+    progressTracked: false,
+    curriculumCode: code,
+    styleIndex: state.subjects.length % SUBJECT_STYLES.length
+  });
+  persistSubjects();
+  renderAll();
+  showToast(`${name} added to your subjects. Set your own progress when you're ready.`);
+}
+
+function openProfileDialog() {
+  const form = document.getElementById("profile-form");
+  for (const [key, value] of Object.entries(state.profile)) {
+    const field = form.elements.namedItem(key);
+    if (!field) continue;
+    if (field.type === "checkbox") field.checked = Boolean(value);
+    else field.value = value || "";
+  }
+  document.getElementById("account-button").hidden = Boolean(state.account);
+  document.getElementById("signout-button").hidden = !state.account;
+  document.getElementById("profile-dialog").showModal();
 }
 
 function toggleTask(id) {
   const task = state.tasks.find((item) => item.id === id);
   if (!task) return;
   task.done = !task.done;
+  task.completedAt = task.done ? new Date().toISOString() : "";
   persistTasks();
   renderAll();
+}
+
+function formatTime(value) {
+  const [hours, minutes] = value.split(":").map(Number);
+  const suffix = hours >= 12 ? "PM" : "AM";
+  return `${hours % 12 || 12}:${String(minutes).padStart(2, "0")} ${suffix}`;
 }
 
 function setTimerDisplay() {
@@ -289,6 +754,11 @@ function startTimer() {
     if (state.secondsLeft <= 0) {
       pauseTimer();
       showToast(state.timerBreak ? "Break's over. Ready for another focus session?" : "Focus session complete. Take a well-earned 5-minute break!");
+      if (!state.timerBreak) {
+        state.sessions.push({ date: localDate(), minutes: state.timerDuration / 60 });
+        persistSessions();
+        renderAll();
+      }
       state.timerBreak = !state.timerBreak;
       state.timerDuration = state.timerBreak ? 5 * 60 : 25 * 60;
       state.secondsLeft = state.timerDuration;
@@ -339,11 +809,11 @@ async function submitAuth(event) {
     });
     const result = await response.json();
     if (!response.ok) throw new Error(result.message || result.Message || "We couldn't sign you in. Please try again.");
-    state.profile = result.user ? { username: result.user.username || result.user.suername || data.get("username") || data.get("email").split("@")[0] } : null;
+    state.account = result.user ? { username: result.user.username || data.get("username") || data.get("email").split("@")[0] } : null;
     try {
-      if (state.profile) localStorage.setItem(PROFILE_KEY, JSON.stringify(state.profile));
+      if (state.account) localStorage.setItem(ACCOUNT_KEY, JSON.stringify(state.account));
     } catch (storageError) {
-      console.error("Could not save your profile:", storageError);
+      console.error("Could not save your account:", storageError);
     }
     updateProfile();
     document.getElementById("auth-dialog").close();
@@ -362,8 +832,9 @@ async function signOut() {
     const response = await fetch("/api/auth/logout", { method: "GET", credentials: "same-origin" });
     const result = await response.json();
     if (!response.ok) throw new Error(result.message || "We couldn't sign you out. Please try again.");
-    state.profile = null;
-    localStorage.removeItem(PROFILE_KEY);
+    state.account = null;
+    localStorage.removeItem(ACCOUNT_KEY);
+    document.getElementById("profile-dialog").close();
     updateProfile();
     showToast("You’ve signed out. Your study plan is still saved here.");
   } catch (error) {
@@ -376,9 +847,22 @@ function setDateLabel() {
   document.getElementById("today-label").textContent = new Intl.DateTimeFormat(undefined, { weekday: "short", month: "short", day: "numeric" }).format(now);
   const hour = now.getHours();
   const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
-  const firstName = state.profile?.username?.split(/\s+/)[0] || "Alex";
-  document.getElementById("welcome-title").innerHTML = `${greeting}, ${escapeHtml(firstName)} <span class="wave">✳</span>`;
+  const username = state.profile.name || state.account?.username || "";
+  document.getElementById("welcome-title").innerHTML = `${greeting}${username ? `, ${escapeHtml(username.split(/\s+/)[0])}` : ""} <span class="wave">✳</span>`;
 }
+
+document.getElementById("profile-reminder-enabled").addEventListener("change", async (event) => {
+  if (!event.currentTarget.checked) return;
+  const allowed = await enableDailyReminder();
+  if (!allowed) event.currentTarget.checked = false;
+});
+
+document.getElementById("reminder-button").addEventListener("click", openProfileDialog);
+checkDailyReminder();
+window.setInterval(checkDailyReminder, 15000);
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) checkDailyReminder();
+});
 
 document.addEventListener("click", (event) => {
   const target = event.target;
@@ -393,6 +877,15 @@ document.addEventListener("click", (event) => {
     if (!state.timerRunning) startTimer();
   }
   if (target.closest("#add-task-button") || target.closest("[data-add-task]")) openTaskDialog();
+  if (target.closest("[data-add-subject]")) openSubjectDialog();
+  const semesterTab = target.closest("[data-semester]");
+  if (semesterTab) {
+    state.currentSemester = Number(semesterTab.dataset.semester);
+    renderCurriculum();
+  }
+  const curriculumCourse = target.closest("[data-add-curriculum-course]");
+  if (curriculumCourse) addCurriculumCourse(curriculumCourse.dataset.courseCode, curriculumCourse.dataset.courseName);
+  if (target.closest("[data-open-profile]")) openProfileDialog();
   const toggle = target.closest("[data-toggle-task]");
   if (toggle) toggleTask(toggle.dataset.toggleTask);
   const remove = target.closest("[data-delete-task]");
@@ -410,7 +903,20 @@ document.addEventListener("click", (event) => {
   const authTab = target.closest("[data-auth-mode]");
   if (authTab) setAuthMode(authTab.dataset.authMode);
   const practice = target.closest("[data-practice-subject]");
-  if (practice) openTaskDialog(practice.dataset.practiceSubject);
+  if (practice) {
+    const subject = state.subjects.find((item) => item.id === practice.dataset.practiceSubject);
+    if (subject) openTaskDialog(subject.name, `Practice ${subject.name} questions`);
+  }
+  const editSubject = target.closest("[data-edit-subject]");
+  if (editSubject) openSubjectDialog(editSubject.dataset.editSubject);
+  const removeSubject = target.closest("[data-delete-subject]");
+  if (removeSubject) {
+    const subject = state.subjects.find((item) => item.id === removeSubject.dataset.deleteSubject);
+    state.subjects = state.subjects.filter((item) => item.id !== removeSubject.dataset.deleteSubject);
+    persistSubjects();
+    renderAll();
+    if (subject) showToast(`${subject.name} removed from your subjects.`);
+  }
   if (target.closest("[data-close-dialog]")) target.closest("dialog").close();
 });
 
@@ -418,14 +924,15 @@ document.getElementById("task-form").addEventListener("submit", (event) => {
   event.preventDefault();
   const data = new FormData(event.currentTarget);
   const id = typeof crypto.randomUUID === "function" ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  const enteredTime = data.get("time");
   state.tasks.push({
     id,
     title: data.get("title").trim(),
-    subject: data.get("subject"),
-    time: data.get("time"),
-    duration: 45,
+    subject: String(data.get("subject") || "").trim(),
+    time: enteredTime ? formatTime(enteredTime) : "",
+    duration: Number(data.get("duration")),
     done: false,
-    date: localDate()
+    date: data.get("date")
   });
   persistTasks();
   renderAll();
@@ -434,18 +941,93 @@ document.getElementById("task-form").addEventListener("submit", (event) => {
   showToast("Added to your study plan. You’ve got this!");
 });
 
-document.getElementById("auth-form").addEventListener("submit", submitAuth);
-document.getElementById("profile-button").addEventListener("click", () => {
-  if (state.profile) {
-    signOut();
+document.getElementById("subject-progress-input").addEventListener("input", (event) => {
+  document.getElementById("subject-progress-value").textContent = `${event.currentTarget.value}%`;
+});
+
+document.getElementById("subject-form").addEventListener("submit", (event) => {
+  event.preventDefault();
+  const data = new FormData(event.currentTarget);
+  const name = String(data.get("name") || "").trim();
+  if (state.subjects.some((subject) => subject.id !== state.editingSubjectId && subject.name.toLocaleLowerCase() === name.toLocaleLowerCase())) {
+    showToast("That subject is already in your list.");
     return;
   }
+  if (state.editingSubjectId) {
+    const subject = state.subjects.find((item) => item.id === state.editingSubjectId);
+    if (subject) {
+      subject.name = name;
+      subject.detail = String(data.get("detail") || "").trim();
+      subject.progress = Number(data.get("progress"));
+      subject.progressTracked = true;
+    }
+  } else {
+    state.subjects.push({
+      id: typeof crypto.randomUUID === "function" ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+      name,
+      detail: String(data.get("detail") || "").trim(),
+      progress: Number(data.get("progress")),
+      progressTracked: true,
+      styleIndex: state.subjects.length % SUBJECT_STYLES.length
+    });
+  }
+  persistSubjects();
+  renderAll();
+  document.getElementById("subject-dialog").close();
+  event.currentTarget.reset();
+  showToast(`${name} ${state.editingSubjectId ? "updated" : "added"} in your subjects.`);
+  state.editingSubjectId = null;
+});
+
+document.getElementById("profile-form").addEventListener("submit", (event) => {
+  event.preventDefault();
+  const data = new FormData(event.currentTarget);
+  const github = normalizeProfileUrl(data.get("github"), "github.com");
+  const linkedin = normalizeProfileUrl(data.get("linkedin"), "linkedin.com");
+  const error = document.getElementById("profile-error");
+  if (data.get("github") && !github) {
+    error.textContent = "Enter a valid github.com profile URL.";
+    return;
+  }
+  if (data.get("linkedin") && !linkedin) {
+    error.textContent = "Enter a valid linkedin.com profile URL.";
+    return;
+  }
+  error.textContent = "";
+  state.profile = {
+    name: String(data.get("name") || "").trim(),
+    college: String(data.get("college") || "").trim(),
+    course: String(data.get("course") || "").trim(),
+    semester: String(data.get("semester") || "").trim(),
+    focusAreas: String(data.get("focusAreas") || "").trim(),
+    examDate: String(data.get("examDate") || ""),
+    weeklyGoal: String(data.get("weeklyGoal") || ""),
+    reminderTime: String(data.get("reminderTime") || ""),
+    reminderEnabled: data.get("reminderEnabled") === "on",
+    lastReminderDate: state.profile.lastReminderDate || "",
+    github,
+    linkedin
+  };
+  persist(PROFILE_KEY, state.profile, "student profile");
+  renderAll();
+  document.getElementById("profile-dialog").close();
+  showToast("Your student profile has been saved.");
+});
+
+document.getElementById("auth-form").addEventListener("submit", submitAuth);
+document.getElementById("profile-button").addEventListener("click", () => {
+  openProfileDialog();
+});
+document.getElementById("account-button").addEventListener("click", () => {
+  document.getElementById("profile-dialog").close();
   setAuthMode("login");
   document.getElementById("auth-dialog").showModal();
 });
+document.getElementById("signout-button").addEventListener("click", signOut);
 document.getElementById("timer-start").addEventListener("click", startTimer);
 document.getElementById("timer-reset").addEventListener("click", resetTimer);
 
 setDateLabel();
+importCurrentSemesterSubjects();
 renderAll();
 setTimerDisplay();

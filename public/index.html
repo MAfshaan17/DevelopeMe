@@ -4,8 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#f6f7fb">
-    <meta name="description" content="A calmer, clearer way to prepare for your next exam.">
-    <title>Prepwise — your study space</title>
+    <meta name="description" content="Mahammad Afshaan's personal JSS Mysuru CSBS semester study planner.">
+    <title>Afshaan's CSBS Study Space — Prepwise</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -33,6 +33,9 @@
           <button class="nav-link" type="button" data-view="subjects">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5z"/><path d="M4 5.5v16m5-13h7m-7 4h7"/></svg><span>My subjects</span>
           </button>
+          <button class="nav-link" type="button" data-view="curriculum">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5z"/><path d="M8 7h8m-8 4h8m-8 4h5"/></svg><span>CSBS curriculum</span>
+          </button>
           <button class="nav-link" type="button" data-view="practice">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 3.5 7.5 12 12l8.5-4.5L12 3Z"/><path d="m5 11 7 3.7 7-3.7M5 15l7 3.7 7-3.7"/></svg><span>Practice tests</span><span class="nav-dot"></span>
           </button>
@@ -42,14 +45,14 @@
         </nav>
 
         <div class="sidebar-bottom">
-          <div class="streak-card">
-            <span class="streak-icon" aria-hidden="true">✦</span>
-            <div><strong>You're on a roll!</strong><span>Keep your 4-day streak going.</span></div>
-            <span class="streak-number">4 <small>days</small></span>
+          <div class="streak-card college-sidebar-card">
+            <span class="streak-icon" aria-hidden="true">⌂</span>
+            <div><strong id="streak-card-title">Your study streak</strong><span id="streak-card-caption">Complete a task or focus session.</span></div>
+            <span class="streak-number"><span id="current-streak">0</span> <small>days</small></span>
           </div>
-          <button class="profile-button" id="profile-button" type="button" aria-label="Sign in or create an account">
-            <span class="avatar" id="avatar-initials">A</span>
-            <span class="profile-copy"><strong id="profile-name">Alex Morgan</strong><small id="profile-status">Your study space</small></span>
+          <button class="profile-button" id="profile-button" type="button" aria-label="Edit your student profile">
+            <span class="avatar" id="avatar-initials">＋</span>
+            <span class="profile-copy"><strong id="profile-name">Student</strong><small id="profile-status">Your study space</small></span>
             <svg class="profile-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
           </button>
         </div>
@@ -63,7 +66,7 @@
           <div class="breadcrumb"><span>Workspace</span><span class="breadcrumb-separator">/</span><strong id="breadcrumb-current">Overview</strong></div>
           <div class="topbar-actions">
             <span class="today-label" id="today-label"></span>
-            <button class="icon-button notification-button" type="button" aria-label="Notifications">
+            <button class="icon-button notification-button" id="reminder-button" type="button" aria-label="Set a daily study reminder" title="Set a daily study reminder">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9m-8 12h4"/></svg><span class="notification-dot"></span>
             </button>
             <button class="button button-dark topbar-cta" id="top-focus-button" type="button"><span>＋</span> Focus session</button>
@@ -73,20 +76,22 @@
         <div class="page-content">
           <section class="view-panel active" id="view-overview" aria-labelledby="welcome-title">
             <div class="welcome-row">
-              <div><div class="eyebrow"><span class="eyebrow-dot"></span> YOUR PERSONAL STUDY SPACE</div><h1 id="welcome-title">Good morning, Alex <span class="wave">✳</span></h1><p class="welcome-subtitle">A little progress each day adds up. Let’s make today count.</p></div>
+              <div><div class="eyebrow"><span class="eyebrow-dot"></span> YOUR PERSONAL STUDY SPACE</div><h1 id="welcome-title">Your study space <span class="wave">✳</span></h1><p class="welcome-subtitle">Add your courses and plan your own semester, one step at a time.</p></div>
               <button class="button button-primary" id="add-task-button" type="button"><span class="plus-icon">＋</span> Add a study task</button>
             </div>
 
             <div class="hero-card">
-              <div class="hero-copy"><div class="hero-kicker"><span class="hero-kicker-dot"></span> YOUR NEXT BIG MOMENT</div><h2>Final exams are<br>closer than they seem.</h2><p>Stay consistent and you’ll walk in feeling ready.</p><button class="hero-link" type="button" data-navigate="plan">View your study plan <span>→</span></button></div>
-              <div class="hero-countdown" aria-label="42 days until your next exam"><div class="countdown-number">42</div><div class="countdown-label">DAYS TO GO</div><div class="countdown-caption">Your future self<br>says thanks.</div></div>
+              <div class="hero-copy"><div class="hero-kicker"><span class="hero-kicker-dot"></span> YOUR SEMESTER, YOUR PLAN</div><h2 id="college-name">JSS Science and Technology University, Mysuru</h2><p id="college-course">B.E. Computer Science and Business Systems (CSBS) · 5th semester</p><div class="student-links" id="student-links"></div></div>
+              <div class="hero-countdown" id="exam-countdown"><button class="exam-date-button" type="button" data-open-profile>Set exam date <span>→</span></button><div class="countdown-caption">Add your next exam to get a countdown.</div></div>
               <div class="hero-decoration hero-decoration-one"></div><div class="hero-decoration hero-decoration-two"></div><div class="hero-sparkle sparkle-one">✳</div><div class="hero-sparkle sparkle-two">✦</div>
             </div>
 
+            <section class="content-card focus-areas-card"><div class="card-heading"><div><div class="section-eyebrow">FROM YOUR PUBLIC GITHUB PROFILE</div><h2>What you're working toward</h2></div><button class="text-button" type="button" data-open-profile>Edit profile <span>→</span></button></div><div class="focus-area-list" id="focus-areas"></div></section>
+
             <div class="stats-grid">
-              <article class="stat-card"><div class="stat-top"><span class="stat-icon stat-icon-lavender"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><span class="stat-trend">THIS WEEK</span></div><div class="stat-value"><span id="weekly-hours">8.5</span><small>hrs</small></div><div class="stat-caption">Time well spent studying</div><div class="mini-bars" aria-label="Study hours: 2, 3, 1, 4, 2, 3, 1 hours"><i style="height:34%"></i><i style="height:54%"></i><i style="height:28%"></i><i style="height:77%"></i><i style="height:48%"></i><i class="bar-today" style="height:66%"></i><i style="height:28%"></i></div></article>
-              <article class="stat-card"><div class="stat-top"><span class="stat-icon stat-icon-mint"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg></span><span class="stat-trend trend-green">+2 THIS WEEK</span></div><div class="stat-value"><span id="tasks-completed">6</span><small>tasks</small></div><div class="stat-caption">You've checked off so far</div><div class="stat-progress"><span class="progress-label">Weekly goal <strong id="weekly-goal-label">6 / 10</strong></span><div class="progress-track"><span id="weekly-goal-bar" style="width:60%"></span></div></div></article>
-              <article class="stat-card"><div class="stat-top"><span class="stat-icon stat-icon-peach"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v3m0 12v3M5.64 5.64l2.12 2.12m8.48 8.48 2.12 2.12M3 12h3m12 0h3m-2.64-6.36-2.12 2.12m-8.48 8.48-2.12 2.12"/><circle cx="12" cy="12" r="4"/></svg></span><span class="stat-trend">PERSONAL BEST</span></div><div class="stat-value">4<small>days</small></div><div class="stat-caption">Your longest streak is 9 days</div><div class="streak-week" aria-label="Study streak this week"><span class="streak-day done">M</span><span class="streak-day done">T</span><span class="streak-day done">W</span><span class="streak-day today">T</span><span class="streak-day">F</span><span class="streak-day">S</span><span class="streak-day">S</span></div></article>
+              <article class="stat-card"><div class="stat-top"><span class="stat-icon stat-icon-lavender"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><span class="stat-trend">THIS WEEK</span></div><div class="stat-value"><span id="weekly-hours">0.0</span><small>hrs</small></div><div class="stat-caption">Focus sessions you completed</div><div class="mini-bars" id="week-mini-bars" aria-label="Recorded focus time by day"></div></article>
+              <article class="stat-card"><div class="stat-top"><span class="stat-icon stat-icon-mint"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg></span><span class="stat-trend trend-green">THIS WEEK</span></div><div class="stat-value"><span id="tasks-completed">0</span><small>tasks</small></div><div class="stat-caption">Tasks you've marked complete</div><button class="weekly-goal-button" type="button" data-open-profile>Weekly goal <strong id="weekly-goal-label">Set a goal</strong></button><div class="progress-track"><span id="weekly-goal-bar" style="width:0%"></span></div></article>
+              <article class="stat-card"><div class="stat-top"><span class="stat-icon stat-icon-peach"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v3m0 12v3M5.64 5.64l2.12 2.12m8.48 8.48 2.12 2.12M3 12h3m12 0h3m-2.64-6.36-2.12 2.12m-8.48 8.48-2.12 2.12"/><circle cx="12" cy="12" r="4"/></svg></span><span class="stat-trend">FROM YOUR ACTIVITY</span></div><div class="stat-value"><span id="streak-value">0</span><small>day streak</small></div><div class="stat-caption" id="streak-caption">Complete a task or focus session to start</div><div class="streak-week" aria-label="Your active days this week" id="streak-week"></div></article>
             </div>
 
             <div class="dashboard-grid">
@@ -105,7 +110,7 @@
             </div>
 
             <section class="content-card subjects-card">
-              <div class="card-heading"><div><div class="section-eyebrow">KEEP EVERY SUBJECT MOVING</div><h2>Your subjects</h2></div><button class="text-button" type="button" data-navigate="subjects">All subjects <span>→</span></button></div>
+              <div class="card-heading"><div><div class="section-eyebrow">YOUR COURSES</div><h2>Your subjects</h2></div><button class="text-button" type="button" data-add-subject>Add subject <span>＋</span></button></div>
               <div class="subject-grid" id="overview-subjects"></div>
             </section>
             <footer class="footer-note"><span>Made for steady progress, not perfection.</span><span>Keep showing up. You’ve got this <span class="footer-heart">♥</span></span></footer>
@@ -119,20 +124,37 @@
           </section>
 
           <section class="view-panel" id="view-subjects" aria-labelledby="subjects-title">
-            <div class="page-heading"><div><div class="eyebrow"><span class="eyebrow-dot"></span> ONE CHAPTER AT A TIME</div><h1 id="subjects-title">My subjects</h1><p class="welcome-subtitle">See where you are and choose what to tackle next.</p></div></div>
+            <div class="page-heading"><div><div class="eyebrow"><span class="eyebrow-dot"></span> YOUR COURSES, YOUR PROGRESS</div><h1 id="subjects-title">My subjects</h1><p class="welcome-subtitle">Add your current subjects and update progress as you study.</p></div><button class="button button-primary" type="button" data-add-subject><span class="plus-icon">＋</span> Add a subject</button></div>
             <div class="subject-grid subject-grid-page" id="all-subjects"></div>
+          </section>
+
+          <section class="view-panel" id="view-curriculum" aria-labelledby="curriculum-title">
+            <div class="page-heading"><div><div class="eyebrow"><span class="eyebrow-dot"></span> JSS STU · B.E. CSBS</div><h1 id="curriculum-title">Your CSBS curriculum</h1><p class="welcome-subtitle">Official semester courses from your 2024-25 scheme. Add a course to your subjects when you want to plan or track it.</p></div></div>
+            <section class="content-card curriculum-overview">
+              <div class="curriculum-status-note">Semester I–IV are shown as completed and Semester V as in progress, based on the timeline you shared. Individual course completion, marks, and progress are not prefilled.</div>
+              <div class="semester-tabs" id="semester-tabs" role="group" aria-label="Select a CSBS semester">
+                <button class="semester-tab" type="button" aria-pressed="false" data-semester="1">Sem I</button>
+                <button class="semester-tab" type="button" aria-pressed="false" data-semester="2">Sem II</button>
+                <button class="semester-tab" type="button" aria-pressed="false" data-semester="3">Sem III</button>
+                <button class="semester-tab" type="button" aria-pressed="false" data-semester="4">Sem IV</button>
+                <button class="semester-tab active" type="button" aria-pressed="true" data-semester="5">Sem V</button>
+              </div>
+              <div class="curriculum-semester-heading"><div><h2 id="curriculum-semester-title">Semester V</h2><p id="curriculum-semester-summary"></p></div><span class="semester-status status-in-progress" id="curriculum-semester-status">In progress</span></div>
+            </section>
+            <p class="curriculum-source" id="curriculum-source"></p>
+            <div class="curriculum-courses" id="curriculum-courses"></div>
           </section>
 
           <section class="view-panel" id="view-practice" aria-labelledby="practice-title">
             <div class="page-heading"><div><div class="eyebrow"><span class="eyebrow-dot"></span> PRACTICE MAKES PROGRESS</div><h1 id="practice-title">Practice tests</h1><p class="welcome-subtitle">Build confidence one question at a time.</p></div></div>
-            <div class="practice-banner"><div class="practice-banner-icon">✳</div><div><strong>Your practice space is ready.</strong><p>Pick a subject and do a quick recall session with your own notes or questions.</p></div></div>
+            <div class="practice-banner"><div class="practice-banner-icon">✳</div><div><strong>Practice your own courses.</strong><p>Add your subjects first, then plan a practice session for the material you’re studying.</p></div></div>
             <div class="practice-grid" id="practice-subjects"></div>
           </section>
 
           <section class="view-panel" id="view-progress" aria-labelledby="progress-title">
             <div class="page-heading"><div><div class="eyebrow"><span class="eyebrow-dot"></span> LOOK HOW FAR YOU'VE COME</div><h1 id="progress-title">Your progress</h1><p class="welcome-subtitle">Consistency is a superpower. Keep going.</p></div></div>
             <div class="stats-grid progress-stats" id="progress-stats"></div>
-            <section class="content-card progress-card"><div class="card-heading"><div><div class="section-eyebrow">YOUR FOCUS, DAY BY DAY</div><h2>Study time this week</h2></div><span class="stat-trend trend-green">A FRESH START, EVERY WEEK</span></div><div class="week-chart" id="week-chart"></div></section>
+            <section class="content-card progress-card"><div class="card-heading"><div><div class="section-eyebrow">YOUR FOCUS, DAY BY DAY</div><h2>Recorded focus time this week</h2></div><span class="stat-trend trend-green">FROM COMPLETED FOCUS SESSIONS</span></div><div class="week-chart" id="week-chart"></div></section>
             <section class="content-card subjects-card"><div class="card-heading"><div><div class="section-eyebrow">EVERY SUBJECT COUNTS</div><h2>Subject progress</h2></div></div><div class="subject-grid" id="progress-subjects"></div></section>
           </section>
         </div>
@@ -143,9 +165,36 @@
     <dialog class="app-dialog" id="task-dialog">
       <form class="dialog-content" id="task-form">
         <div class="dialog-top"><div><div class="section-eyebrow">MAKE A LITTLE PLAN</div><h2>Add a study task</h2></div><button class="icon-button dialog-close" type="button" data-close-dialog aria-label="Close dialog">×</button></div>
-        <label class="field-label" for="task-title">What would you like to study?</label><input class="text-input" id="task-title" name="title" maxlength="100" placeholder="e.g. Review chapter 4 notes" required>
-        <div class="form-row"><div><label class="field-label" for="task-subject">Subject</label><select class="text-input" id="task-subject" name="subject"></select></div><div><label class="field-label" for="task-time">Time</label><select class="text-input" id="task-time" name="time"><option value="9:00 AM">9:00 AM</option><option value="10:00 AM">10:00 AM</option><option value="11:00 AM">11:00 AM</option><option value="1:00 PM">1:00 PM</option><option value="2:00 PM">2:00 PM</option><option value="3:00 PM">3:00 PM</option><option value="4:00 PM">4:00 PM</option><option value="5:00 PM">5:00 PM</option></select></div></div>
+        <label class="field-label" for="task-title">What would you like to study?</label><input class="text-input" id="task-title" name="title" maxlength="100" placeholder="Enter your study task" required>
+        <div class="form-row"><div><label class="field-label" for="task-subject">Subject (optional)</label><input class="text-input" id="task-subject" name="subject" list="subject-options" maxlength="60" placeholder="Choose or type a subject"><datalist id="subject-options"></datalist></div><div><label class="field-label" for="task-date">Study date</label><input class="text-input" id="task-date" name="date" type="date" required></div></div>
+        <div class="form-row"><div><label class="field-label" for="task-time">Start time (optional)</label><input class="text-input" id="task-time" name="time" type="time"></div><div><label class="field-label" for="task-duration">Planned time</label><select class="text-input" id="task-duration" name="duration"><option value="25">25 minutes</option><option value="45">45 minutes</option><option value="60">1 hour</option><option value="90">1.5 hours</option></select></div></div>
         <div class="dialog-actions"><button class="button button-quiet" type="button" data-close-dialog>Cancel</button><button class="button button-primary" type="submit">Add to my plan <span>→</span></button></div>
+      </form>
+    </dialog>
+
+    <dialog class="app-dialog" id="subject-dialog">
+      <form class="dialog-content" id="subject-form">
+        <div class="dialog-top"><div><div class="section-eyebrow">YOUR COLLEGE COURSES</div><h2 id="subject-dialog-title">Add a subject</h2></div><button class="icon-button dialog-close" type="button" data-close-dialog aria-label="Close dialog">×</button></div>
+        <label class="field-label" for="subject-name">Subject name</label><input class="text-input" id="subject-name" name="name" maxlength="60" placeholder="Enter one of your current subjects" required>
+        <label class="field-label" for="subject-detail">Course code or notes (optional)</label><input class="text-input" id="subject-detail" name="detail" maxlength="100" placeholder="Add a course code, instructor, or topic">
+        <label class="field-label" for="subject-progress-input">Your current progress <span id="subject-progress-value">0%</span></label><input class="range-input" id="subject-progress-input" name="progress" type="range" min="0" max="100" value="0">
+        <div class="dialog-actions"><button class="button button-quiet" type="button" data-close-dialog>Cancel</button><button class="button button-primary" id="subject-submit-label" type="submit">Add subject <span>→</span></button></div>
+      </form>
+    </dialog>
+
+    <dialog class="app-dialog" id="profile-dialog">
+      <form class="dialog-content" id="profile-form">
+        <div class="dialog-top"><div><div class="section-eyebrow">YOUR COLLEGE, YOUR SETUP</div><h2>Student profile</h2></div><button class="icon-button dialog-close" type="button" data-close-dialog aria-label="Close dialog">×</button></div>
+        <label class="field-label" for="profile-name-input">Name</label><input class="text-input" id="profile-name-input" name="name" maxlength="80" placeholder="Your name">
+        <label class="field-label" for="profile-college">College / university</label><input class="text-input" id="profile-college" name="college" maxlength="120" placeholder="Your college">
+        <label class="field-label" for="profile-course">Degree / branch</label><input class="text-input" id="profile-course" name="course" maxlength="120" placeholder="Your degree and branch">
+        <div class="form-row"><div><label class="field-label" for="profile-semester">Current year / semester</label><input class="text-input" id="profile-semester" name="semester" maxlength="40" placeholder="e.g. 5th semester"></div><div><label class="field-label" for="profile-exam-date">Next exam date</label><input class="text-input" id="profile-exam-date" name="examDate" type="date"></div></div>
+        <label class="field-label" for="profile-focus-areas">Your current focus areas</label><textarea class="text-input profile-focus-input" id="profile-focus-areas" name="focusAreas" maxlength="300" placeholder="Separate your focus areas with commas"></textarea>
+        <label class="field-label" for="profile-weekly-goal">Weekly task goal (optional)</label><input class="text-input" id="profile-weekly-goal" name="weeklyGoal" type="number" min="1" max="100" placeholder="Set your own goal">
+        <div class="reminder-settings"><div><label class="field-label" for="profile-reminder-time">Daily study reminder</label><input class="text-input" id="profile-reminder-time" name="reminderTime" type="time"></div><label class="reminder-toggle" for="profile-reminder-enabled"><input id="profile-reminder-enabled" name="reminderEnabled" type="checkbox"><span><strong>Turn on reminder</strong><small>Notifications work while this app is open.</small></span></label></div>
+        <div class="form-row"><div><label class="field-label" for="profile-github">GitHub profile</label><input class="text-input" id="profile-github" name="github" type="url" placeholder="https://github.com/username"></div><div><label class="field-label" for="profile-linkedin">LinkedIn profile</label><input class="text-input" id="profile-linkedin" name="linkedin" type="url" placeholder="https://linkedin.com/in/username"></div></div>
+        <p class="auth-error" id="profile-error" role="alert"></p>
+        <div class="dialog-actions"><button class="button button-quiet" id="account-button" type="button">Sign in</button><button class="button button-quiet" id="signout-button" type="button" hidden>Sign out</button><button class="button button-quiet" type="button" data-close-dialog>Cancel</button><button class="button button-primary" type="submit">Save my profile <span>→</span></button></div>
       </form>
     </dialog>
 

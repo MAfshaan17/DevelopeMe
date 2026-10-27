@@ -36,8 +36,12 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .nav-count { display: grid; width: 21px; height: 21px; place-items: center; margin-left: auto; border-radius: 7px; background: #fff; color: var(--purple-dark); font-size: 10px; }
 .nav-dot { width: 6px; height: 6px; margin-left: auto; border-radius: 50%; background: #f2a376; }
 .sidebar-bottom { margin-top: auto; }
-.streak-card { display: flex; align-items: center; gap: 8px; padding: 13px 10px; border: 1px solid #f1eee8; border-radius: 10px; background: #fffdf9; }
-.streak-icon { display: grid; width: 28px; height: 28px; flex: 0 0 auto; place-items: center; border-radius: 9px; background: #fff0dc; color: #e2a13f; }
+.streak-card { display: flex; align-items: center; gap: 8px; padding: 13px 10px; border: 1px solid #efeff5; border-radius: 10px; background: #faf9ff; }
+.streak-icon { display: grid; width: 28px; height: 28px; flex: 0 0 auto; place-items: center; border-radius: 9px; background: #f0efff; color: #786ce1; }
+.streak-card.college-sidebar-card { background: #faf9ff; }
+.college-sidebar-card > div { min-width: 0; }
+.college-sidebar-card strong, .college-sidebar-card div span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.college-sidebar-card .streak-number { color: #786ce1; }
 .streak-card strong, .streak-card div span { display: block; }
 .streak-card strong { font-size: 10px; }
 .streak-card div span { margin-top: 3px; color: var(--muted); font-size: 9px; }
@@ -89,8 +93,11 @@ h1 { margin-top: 8px; color: #25263b; font-size: clamp(24px, 3vw, 29px); font-we
 .hero-copy { position: relative; z-index: 1; }
 .hero-kicker { display: flex; align-items: center; gap: 6px; color: #7e72cf; font-size: 8px; font-weight: 700; letter-spacing: 1.1px; }
 .hero-kicker-dot { width: 5px; height: 5px; border-radius: 50%; background: #8b7eea; }
-.hero-copy h2 { margin-top: 12px; color: #262740; font-size: 22px; line-height: 1.25; }
-.hero-copy p { margin-top: 7px; color: #818198; font-size: 10px; }
+.hero-copy h2 { max-width: 470px; margin-top: 12px; color: #262740; font-size: 21px; line-height: 1.3; }
+.hero-copy p { max-width: 480px; margin-top: 7px; color: #818198; font-size: 10px; line-height: 1.6; }
+.student-links { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 11px; }
+.student-links a, .inline-link { padding: 0; border: 0; background: transparent; color: #6558d6; font-size: 9px; font-weight: 700; text-decoration: none; }
+.student-links a:hover, .inline-link:hover { text-decoration: underline; }
 .hero-link { margin-top: 13px; padding: 0; border: 0; background: transparent; color: #6558d6; font-size: 10px; font-weight: 700; }
 .hero-link span, .text-button span { margin-left: 5px; font-size: 14px; transition: margin .15s; }
 .hero-link:hover span, .text-button:hover span { margin-left: 9px; }
@@ -98,6 +105,9 @@ h1 { margin-top: 8px; color: #25263b; font-size: clamp(24px, 3vw, 29px); font-we
 .countdown-number { color: #6258ca; font-family: Manrope, sans-serif; font-size: 60px; font-weight: 800; letter-spacing: -4px; line-height: 1; }
 .countdown-label { margin-top: 4px; color: #8178c5; font-size: 8px; font-weight: 700; letter-spacing: 1.5px; }
 .countdown-caption { margin-top: 8px; color: #9795a8; font-size: 9px; line-height: 1.5; }
+.exam-date-button { padding: 9px 11px; border: 1px solid #ddd8ff; border-radius: 8px; background: #fff; color: #6558d6; font-size: 9px; font-weight: 700; white-space: nowrap; }
+.exam-date-button:hover { border-color: #9c92ed; }
+.exam-date-button span { margin-left: 4px; }
 .hero-decoration { position: absolute; border: 1px solid #dcd7ff; border-radius: 50%; }
 .hero-decoration-one { top: -90px; right: 137px; width: 220px; height: 220px; opacity: .46; }
 .hero-decoration-two { top: -53px; right: 163px; width: 150px; height: 150px; opacity: .48; }
@@ -123,6 +133,9 @@ h1 { margin-top: 8px; color: #25263b; font-size: clamp(24px, 3vw, 29px); font-we
 .mini-bars i { width: 100%; border-radius: 3px 3px 1px 1px; background: #e8e5ff; }
 .mini-bars i.bar-today { background: #8275e8; }
 .stat-progress { margin-top: 10px; }
+.weekly-goal-button { display: flex; width: 100%; justify-content: space-between; margin-top: 9px; padding: 0; border: 0; background: transparent; color: #9999a8; font-size: 8px; text-align: left; }
+.weekly-goal-button strong { color: #686a80; font-size: 8px; }
+.weekly-goal-button:hover strong { color: var(--purple-dark); }
 .progress-label { display: flex; justify-content: space-between; color: #9999a8; font-size: 8px; }
 .progress-label strong { color: #686a80; font-size: 8px; }
 .progress-track, .timer-progress { overflow: hidden; height: 5px; border-radius: 10px; background: #efeff5; }
@@ -168,12 +181,20 @@ h1 { margin-top: 8px; color: #25263b; font-size: clamp(24px, 3vw, 29px); font-we
 .timer-note { margin-top: 10px; color: #a1a1af; font-size: 8px; text-align: center; }
 .timer-note span { padding: 0 4px; color: #d1d0da; }
 .subjects-card { margin-top: 16px; }
+.focus-areas-card { margin-top: 14px; padding: 14px 18px; }
+.focus-area-list { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 12px; }
+.focus-area-chip { padding: 6px 9px; border: 1px solid #eceaff; border-radius: 7px; background: #f8f7ff; color: #6558b8; font-size: 9px; }
 .subject-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 11px; margin-top: 14px; }
 .subject-item { min-width: 0; padding: 12px; border: 1px solid #f0eff5; border-radius: 9px; background: linear-gradient(145deg, #fff, #fdfdff); }
 .subject-top { display: flex; align-items: center; gap: 8px; }
 .subject-icon { display: grid; width: 29px; height: 29px; flex: 0 0 auto; place-items: center; border-radius: 9px; font-size: 13px; }
 .subject-item h3 { overflow: hidden; color: #3e4054; font-size: 10px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
 .subject-item p { margin-top: 3px; color: #9b9baa; font-size: 8px; }
+.subject-top > div { min-width: 0; flex: 1; }
+.subject-delete { width: 22px; height: 22px; flex: 0 0 auto; border: 0; border-radius: 6px; background: transparent; color: #a7a7b3; font-size: 15px; }
+.subject-delete:hover { background: #fff0ee; color: #cf7565; }
+.subject-edit { width: 22px; height: 22px; flex: 0 0 auto; border: 0; border-radius: 6px; background: transparent; color: #8e87c7; font-size: 12px; }
+.subject-edit:hover { background: #f0efff; }
 .subject-progress-label { display: flex; justify-content: space-between; margin-top: 12px; color: #9798a9; font-size: 8px; }
 .subject-progress-label strong { color: #66677b; }
 .subject-progress { height: 4px; overflow: hidden; margin-top: 6px; border-radius: 8px; background: #f0eff5; }
@@ -186,6 +207,39 @@ h1 { margin-top: 8px; color: #25263b; font-size: clamp(24px, 3vw, 29px); font-we
 .subject-grid-page .subject-progress-label { margin-top: 16px; font-size: 9px; }
 .footer-note { display: flex; justify-content: space-between; gap: 12px; padding: 17px 3px 0; color: #a6a6b3; font-size: 8px; }
 .footer-heart { color: #e8a08d; }
+
+.curriculum-overview { padding: 18px 20px 14px; }
+.curriculum-status-note { padding: 11px 13px; border: 1px solid #eceaff; border-radius: 8px; background: #f8f7ff; color: #66637e; font-size: 10px; line-height: 1.6; }
+.semester-tabs { display: flex; gap: 6px; margin-top: 17px; overflow-x: auto; padding-bottom: 3px; }
+.semester-tab { min-width: 62px; min-height: 32px; border: 1px solid #ececf3; border-radius: 8px; background: white; color: #77788d; font-size: 9px; font-weight: 600; }
+.semester-tab:hover, .semester-tab.active { border-color: #d9d4ff; background: #f1f0ff; color: var(--purple-dark); }
+.semester-tab.active { box-shadow: inset 0 0 0 1px #e4e0ff; }
+.curriculum-semester-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 17px; }
+.curriculum-semester-heading h2 { color: #2b2c40; font-size: 16px; }
+.curriculum-semester-heading p { margin-top: 5px; color: #9293a4; font-size: 9px; line-height: 1.6; }
+.semester-status { flex: 0 0 auto; padding: 6px 9px; border-radius: 7px; font-size: 8px; font-weight: 700; }
+.status-completed { background: #eaf8f3; color: #34886b; }
+.status-in-progress { background: #f1f0ff; color: #6558d6; }
+.status-upcoming { background: #fff3e8; color: #ad7438; }
+.curriculum-source { margin: 11px 2px 0; color: #89899b; font-size: 9px; line-height: 1.6; }
+.curriculum-courses { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 13px; }
+.curriculum-course { min-width: 0; padding: 15px; border: 1px solid #efeff5; border-radius: 10px; background: white; }
+.curriculum-course-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.curriculum-course-heading > div:first-child { min-width: 0; }
+.course-code { color: #8178c5; font-size: 8px; font-weight: 700; letter-spacing: .3px; }
+.curriculum-course h3 { margin-top: 5px; color: #3e4054; font-size: 11px; line-height: 1.45; }
+.course-tags { display: grid; flex: 0 0 auto; justify-items: end; gap: 4px; }
+.course-category, .course-credits { padding: 4px 6px; border-radius: 5px; background: #f6f5fb; color: #77778b; font-size: 7px; white-space: nowrap; }
+.course-credits { background: #f0efff; color: #6558c6; }
+.course-hours { margin-top: 11px; color: #77788d; font-size: 9px; }
+.course-note { margin-top: 9px; color: #9293a4; font-size: 8px; line-height: 1.55; }
+.curriculum-add-button { min-height: 29px; margin-top: 12px; padding-inline: 9px; font-size: 8px; }
+.curriculum-add-button:disabled { cursor: default; opacity: .7; }
+.elective-options { display: grid; gap: 6px; margin-top: 8px; }
+.elective-option { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding-top: 7px; border-top: 1px solid #f1f0f5; color: #626377; font-size: 8px; }
+.elective-option > span { display: grid; gap: 3px; }
+.elective-option strong { color: #8178c5; font-size: 7px; }
+.elective-option .curriculum-add-button { margin-top: 0; }
 
 .page-heading { margin-bottom: 23px; }
 .page-heading h1 { margin-top: 9px; }
@@ -224,6 +278,11 @@ h1 { margin-top: 8px; color: #25263b; font-size: clamp(24px, 3vw, 29px); font-we
 .practice-card h3 { color: #3f4054; font-size: 12px; }
 .practice-card p { margin-top: 4px; color: #9999a8; font-size: 9px; }
 .practice-card .button { margin-top: 15px; }
+.empty-state { grid-column: 1 / -1; display: flex; min-height: 174px; flex-direction: column; align-items: center; justify-content: center; padding: 20px; border: 1px dashed #dedced; border-radius: 10px; background: #fdfdff; text-align: center; }
+.empty-state-icon { display: grid; width: 33px; height: 33px; place-items: center; border-radius: 11px; background: #f0efff; color: #7669e8; font-size: 17px; }
+.empty-state h3 { margin-top: 10px; color: #414257; font-family: Manrope, sans-serif; font-size: 12px; }
+.empty-state p { margin-top: 5px; color: #9292a2; font-size: 9px; line-height: 1.5; }
+.empty-state .button { margin-top: 13px; }
 .progress-stats { margin-top: 0; margin-bottom: 16px; }
 .progress-stats .stat-card { min-height: 120px; }
 .week-chart { display: grid; grid-template-columns: repeat(7, 1fr); align-items: end; gap: 13px; height: 178px; margin-top: 20px; padding: 0 8px; border-bottom: 1px solid #eeedf4; }
@@ -244,8 +303,16 @@ h1 { margin-top: 8px; color: #25263b; font-size: clamp(24px, 3vw, 29px); font-we
 .field-label { display: block; margin: 14px 0 7px; color: #5b5c6e; font-size: 10px; font-weight: 600; }
 .text-input { width: 100%; min-height: 40px; padding: 0 11px; border: 1px solid #e9e8f0; border-radius: 8px; background: white; color: #38394e; font-size: 10px; }
 .text-input::placeholder { color: #b0afbd; }
+.profile-focus-input { min-height: 68px; padding-top: 10px; resize: vertical; }
+.range-input { width: 100%; accent-color: var(--purple); }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .form-row > div { min-width: 0; }
+.reminder-settings { display: grid; grid-template-columns: 1fr 1.15fr; align-items: end; gap: 13px; }
+.reminder-toggle { display: flex; min-height: 40px; align-items: center; gap: 9px; padding: 6px 10px; border: 1px solid #e9e8f0; border-radius: 8px; cursor: pointer; }
+.reminder-toggle input { width: 15px; height: 15px; flex: 0 0 auto; accent-color: var(--purple); }
+.reminder-toggle strong, .reminder-toggle small { display: block; }
+.reminder-toggle strong { color: #5b5c6e; font-size: 9px; }
+.reminder-toggle small { margin-top: 3px; color: #9292a2; font-size: 8px; line-height: 1.4; }
 .dialog-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 22px; }
 .button-quiet { border-color: #ecebf2; background: white; color: #767689; }
 .button-quiet:hover { background: #f9f9fb; }
@@ -254,6 +321,8 @@ h1 { margin-top: 8px; color: #25263b; font-size: clamp(24px, 3vw, 29px); font-we
 .auth-tab.active { background: white; color: var(--purple-dark); font-weight: 700; box-shadow: 0 1px 4px #22223310; }
 .auth-username[hidden] { display: none; }
 .auth-error { min-height: 16px; margin-top: 9px; color: #c65e5e; font-size: 9px; }
+.dialog-actions [hidden] { display: none; }
+.weekly-goal-button + .progress-track { margin-top: 6px; }
 .toast-region { position: fixed; right: 20px; bottom: 18px; z-index: 12; display: grid; gap: 8px; }
 .toast { max-width: min(360px, calc(100vw - 40px)); padding: 11px 15px; border: 1px solid #e8e6f4; border-radius: 9px; background: white; color: #424359; font-size: 10px; box-shadow: 0 8px 26px #26243d18; animation: appear .2s ease-out; }
 
@@ -269,6 +338,7 @@ h1 { margin-top: 8px; color: #25263b; font-size: clamp(24px, 3vw, 29px); font-we
   .topbar { padding-inline: 25px; }
   .page-content { padding-inline: 25px; }
   .subject-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .curriculum-courses { grid-template-columns: 1fr; }
   .hero-countdown { margin-right: 4px; }
 }
 @media (max-width: 760px) {
@@ -289,6 +359,7 @@ h1 { margin-top: 8px; color: #25263b; font-size: clamp(24px, 3vw, 29px); font-we
   .timer-display { margin-top: 22px; }
   .timer-progress { margin-top: 19px; }
   .subject-grid-page { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .curriculum-overview { padding: 14px 12px 12px; }
   .plan-summary { gap: 8px; }
   .plan-summary-card { gap: 7px; padding: 12px 9px; }
   .plan-summary-icon { width: 28px; height: 28px; }
@@ -324,6 +395,7 @@ h1 { margin-top: 8px; color: #25263b; font-size: clamp(24px, 3vw, 29px); font-we
   .streak-week { gap: 3px; }
   .streak-day { width: 15px; height: 15px; font-size: 6px; }
   .dashboard-grid { gap: 10px; margin-top: 10px; }
+  .focus-areas-card { padding: 12px; }
   .content-card { padding: 14px 12px; }
   .card-heading h2 { font-size: 14px; }
   .schedule-item { grid-template-columns: 51px 3px minmax(0, 1fr) auto; gap: 7px; }
