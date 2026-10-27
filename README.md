@@ -17,3 +17,5 @@ The study dashboard can be explored without a database connection. Account regis
 - `POST /api/auth/login` — sign in
 - `GET /api/auth/logout` — sign out
 - `GET /api/health` — check that the server is responding
+
+The backend-first project now has a working preparation dashboard. Continue building it incrementally as your study needs evolve.
