@@ -1,12 +1,12 @@
-# Afshaan's CSBS Study Space
+# STUDY SPACE
 
-A personal study planner for **Mahammad Afshaan**, a **5th-semester B.E. Computer Science and Business Systems student at JSS Science and Technology University, Mysuru**.
+A personal study planner for **MYSELF**, a **5th-semester B.E. Computer Science and Business Systems student at JSS Science and Technology University, Mysuru**.
 
-This project is meant to support Afshaan's own college routine, semester goals, and interests—not to show made-up courses or sample activity. Your profile starts with your details and the focus areas from your [public GitHub profile](https://github.com/MAfshaan17). Edit these any time from **Student profile**.
+This project is meant to support my own college routine, semester goals, and interests—not to show made-up courses or sample activity. My profile starts with my own details and the focus areas from my [public GitHub profile](https://github.com/MAfshaan17). Edit these any time from **Student profile**.
 
 ## My study space
 
-- Add only the subjects you are actually taking and update each subject's progress.
+- Add only the subjects which are actually iam  taking and update each subject's progress.
 - Check the **CSBS curriculum** view for the official Semester I–V courses from the 2024-25 JSS STU scheme (PDF pages 35–40). Semester I–IV are marked complete and Semester V in progress based on the timeline you shared; no marks or individual course progress are assumed. The five non-elective Semester V courses are added to **My subjects** once, with progress left untracked until you set it. Add other listed courses when you want to plan or track them.
 - The scheme gives practical/lab hours as **P** alongside course lecture/tutorial hours. It does not list stand-alone lab course titles for these semesters, so none are invented. The Semester V Professional Elective I choices are shown without assuming which one you selected; the Open Elective title remains yours to enter.
 - Plan your own study tasks by date, time, and duration.
