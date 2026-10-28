@@ -3,12 +3,17 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#f6f7fb">
+    <meta name="theme-color" content="#f3f5f4">
     <meta name="description" content="Mahammad Afshaan's personal JSS Mysuru CSBS semester study planner.">
     <title>Afshaan's CSBS Study Space — Prepwise</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+      try {
+        const theme = localStorage.getItem("prepwise.theme.v1");
+        if (theme === "dark" || theme === "light") document.documentElement.dataset.theme = theme;
+      } catch (error) {
+        console.error("Could not load the saved theme:", error);
+      }
+    </script>
     <link rel="stylesheet" href="/styles.css">
     <script src="/app.js" defer></script>
   </head>
@@ -66,6 +71,10 @@
           <div class="breadcrumb"><span>Workspace</span><span class="breadcrumb-separator">/</span><strong id="breadcrumb-current">Overview</strong></div>
           <div class="topbar-actions">
             <span class="today-label" id="today-label"></span>
+            <button class="icon-button theme-button" id="theme-button" type="button" aria-label="Switch to dark theme" title="Switch to dark theme">
+              <svg class="theme-icon-light" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg>
+              <svg class="theme-icon-dark" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.9 13A9 9 0 0 1 11 3.1 9 9 0 1 0 20.9 13Z"/></svg>
+            </button>
             <button class="icon-button notification-button" id="reminder-button" type="button" aria-label="Set a daily study reminder" title="Set a daily study reminder">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9m-8 12h4"/></svg><span class="notification-dot"></span>
             </button>
@@ -76,17 +85,16 @@
         <div class="page-content">
           <section class="view-panel active" id="view-overview" aria-labelledby="welcome-title">
             <div class="welcome-row">
-              <div><div class="eyebrow"><span class="eyebrow-dot"></span> YOUR PERSONAL STUDY SPACE</div><h1 id="welcome-title">Your study space <span class="wave">✳</span></h1><p class="welcome-subtitle">Add your courses and plan your own semester, one step at a time.</p></div>
+              <div><div class="eyebrow"><span class="eyebrow-dot"></span> STUDY DASHBOARD</div><h1 id="welcome-title">Your study space</h1><p class="welcome-subtitle">Your courses, plan, and progress for this semester.</p></div>
               <button class="button button-primary" id="add-task-button" type="button"><span class="plus-icon">＋</span> Add a study task</button>
             </div>
 
             <div class="hero-card">
-              <div class="hero-copy"><div class="hero-kicker"><span class="hero-kicker-dot"></span> YOUR SEMESTER, YOUR PLAN</div><h2 id="college-name">JSS Science and Technology University, Mysuru</h2><p id="college-course">B.E. Computer Science and Business Systems (CSBS) · 5th semester</p><div class="student-links" id="student-links"></div></div>
+              <div class="hero-copy"><div class="hero-kicker"><span class="hero-kicker-dot"></span> CURRENT SEMESTER</div><h2 id="college-name">JSS Science and Technology University, Mysuru</h2><p id="college-course">B.E. Computer Science and Business Systems (CSBS) · 5th semester</p><div class="student-links" id="student-links"></div></div>
               <div class="hero-countdown" id="exam-countdown"><button class="exam-date-button" type="button" data-open-profile>Set exam date <span>→</span></button><div class="countdown-caption">Add your next exam to get a countdown.</div></div>
-              <div class="hero-decoration hero-decoration-one"></div><div class="hero-decoration hero-decoration-two"></div><div class="hero-sparkle sparkle-one">✳</div><div class="hero-sparkle sparkle-two">✦</div>
             </div>
 
-            <section class="content-card focus-areas-card"><div class="card-heading"><div><div class="section-eyebrow">FROM YOUR PUBLIC GITHUB PROFILE</div><h2>What you're working toward</h2></div><button class="text-button" type="button" data-open-profile>Edit profile <span>→</span></button></div><div class="focus-area-list" id="focus-areas"></div></section>
+            <section class="content-card focus-areas-card"><div class="card-heading"><div><div class="section-eyebrow">MY FOCUS</div><h2>What I'm learning</h2></div><button class="text-button" type="button" data-open-profile>Edit profile <span>→</span></button></div><div class="focus-area-list" id="focus-areas"></div></section>
 
             <div class="stats-grid">
               <article class="stat-card"><div class="stat-top"><span class="stat-icon stat-icon-lavender"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><span class="stat-trend">THIS WEEK</span></div><div class="stat-value"><span id="weekly-hours">0.0</span><small>hrs</small></div><div class="stat-caption">Focus sessions you completed</div><div class="mini-bars" id="week-mini-bars" aria-label="Recorded focus time by day"></div></article>
@@ -100,12 +108,12 @@
                 <div class="schedule-list" id="today-schedule"></div>
               </section>
               <section class="content-card focus-card">
-                <div class="card-heading"><div><div class="section-eyebrow">SMALL STEPS, BIG FOCUS</div><h2>Focus timer</h2></div><span class="live-pill"><i></i> READY</span></div>
+                <div class="card-heading"><div><div class="section-eyebrow">25 MINUTE TIMER</div><h2>Focus session</h2></div><span class="live-pill"><i></i> READY</span></div>
                 <div class="timer-display" id="timer-display">25<span>:00</span></div>
                 <div class="timer-mode" id="timer-mode">A little focus goes a long way</div>
                 <div class="timer-progress"><span id="timer-progress-bar"></span></div>
                 <div class="timer-controls"><button class="button button-primary timer-start" id="timer-start" type="button">Start focusing <span>→</span></button><button class="icon-button timer-reset" id="timer-reset" type="button" aria-label="Reset timer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 2.64-6.36L3 8m0-5v5h5"/></svg></button></div>
-                <p class="timer-note">25 min focus <span>·</span> 5 min break</p>
+                <p class="timer-note">25 min focus · 5 min break</p>
               </section>
             </div>
 
@@ -113,7 +121,7 @@
               <div class="card-heading"><div><div class="section-eyebrow">YOUR COURSES</div><h2>Your subjects</h2></div><button class="text-button" type="button" data-add-subject>Add subject <span>＋</span></button></div>
               <div class="subject-grid" id="overview-subjects"></div>
             </section>
-            <footer class="footer-note"><span>Made for steady progress, not perfection.</span><span>Keep showing up. You’ve got this <span class="footer-heart">♥</span></span></footer>
+            <footer class="footer-note"><span>Afshaan's CSBS study planner</span><span>JSS Science and Technology University · Mysuru</span></footer>
           </section>
 
           <section class="view-panel" id="view-plan" aria-labelledby="plan-title">

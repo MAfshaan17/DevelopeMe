@@ -7,6 +7,7 @@ const CURRICULUM_IMPORT_KEY = "prepwise.curriculum-import.v1";
 const SESSIONS_KEY = "prepwise.sessions.v1";
 const PROFILE_KEY = "prepwise.student-profile.v1";
 const ACCOUNT_KEY = "prepwise.profile.v1";
+const THEME_KEY = "prepwise.theme.v1";
 const PROFILE_DEFAULTS = {
   name: "Mahammad Afshaan",
   college: "JSS Science and Technology University, Mysuru",
@@ -631,7 +632,30 @@ function updateProfile() {
   document.getElementById("profile-name").textContent = username;
   document.getElementById("profile-status").textContent = state.account ? "Account connected" : "Your study space";
   document.getElementById("avatar-initials").textContent = initials;
-  document.getElementById("welcome-title").innerHTML = `${greeting}${username === "Student" ? "" : `, ${escapeHtml(username.split(/\s+/)[0])}`} <span class="wave">✳</span>`;
+  document.getElementById("welcome-title").textContent = username === "Student"
+    ? `${greeting}.`
+    : `${greeting}, ${username.split(/\s+/)[0]}.`;
+}
+
+function updateThemeButton() {
+  const isDark = document.documentElement.dataset.theme === "dark";
+  const label = isDark ? "Switch to light theme" : "Switch to dark theme";
+  const button = document.getElementById("theme-button");
+  button.setAttribute("aria-label", label);
+  button.title = label;
+  document.querySelector('meta[name="theme-color"]').content = isDark ? "#171b1a" : "#f3f5f4";
+}
+
+function toggleTheme() {
+  const theme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+  document.documentElement.dataset.theme = theme;
+  updateThemeButton();
+  try {
+    localStorage.setItem(THEME_KEY, theme);
+  } catch (error) {
+    console.error("Could not save the selected theme:", error);
+    showToast("Your theme preference couldn't be saved in this browser.");
+  }
 }
 
 function changeView(view) {
@@ -858,6 +882,7 @@ document.getElementById("profile-reminder-enabled").addEventListener("change", a
 });
 
 document.getElementById("reminder-button").addEventListener("click", openProfileDialog);
+document.getElementById("theme-button").addEventListener("click", toggleTheme);
 checkDailyReminder();
 window.setInterval(checkDailyReminder, 15000);
 document.addEventListener("visibilitychange", () => {
@@ -1028,6 +1053,7 @@ document.getElementById("timer-start").addEventListener("click", startTimer);
 document.getElementById("timer-reset").addEventListener("click", resetTimer);
 
 setDateLabel();
+updateThemeButton();
 importCurrentSemesterSubjects();
 renderAll();
 setTimerDisplay();
