@@ -29,6 +29,15 @@ const SUBJECT_STYLES = [
   { icon: "Aa", color: "#d18f9c", background: "#fbf0f3" },
   { icon: "◷", color: "#c79656", background: "#fcf4e8" }
 ];
+const DAILY_REALITY_CHECKS = [
+  "Afshaan, nobody can do the practice hours for you. If placement is your goal, build the skills steadily: one problem, one concept, one project step at a time.",
+  "Skipping one day will not decide your future. Repeating the skip can shrink your options. Choose one subject and give it 25 honest minutes today.",
+  "Want to be a stronger engineer? Build, debug, and explain things—not just collect tutorials. Make one small piece of real progress today.",
+  "Your degree is a start, not a job guarantee. Practice a problem, review a CS fundamental, or improve a project. Start with one focused block.",
+  "Do not confuse planning with progress. A simple task finished today beats the perfect timetable you never follow.",
+  "Confidence comes from repetitions. Put in a few fundamentals today so interviews feel less unfamiliar later.",
+  "Engineering is also how you work with people. Keep your word, communicate clearly, and help someone—then put in one focused study session."
+];
 const CSBS_CURRICULUM = [
   {
     semester: 1,
@@ -400,6 +409,7 @@ function renderOverview() {
   const weeklySessions = sessionsThisWeek();
   const focusMinutes = weeklySessions.reduce((total, session) => total + session.minutes, 0);
   const streak = activeDays();
+  renderDailyRealityCheck();
   document.getElementById("weekly-hours").textContent = (focusMinutes / 60).toFixed(1);
   document.getElementById("tasks-completed").textContent = String(completed);
   document.getElementById("weekly-goal-label").textContent = weeklyGoal ? `${completed} / ${weeklyGoal}` : "Set a goal";
@@ -585,14 +595,34 @@ function renderAll() {
 
 function reminderMessage() {
   const firstName = state.profile.name.trim().split(/\s+/)[0] || "Afshaan";
-  const subject = state.subjects[0]?.name;
+  const realityCheck = DAILY_REALITY_CHECKS[dailyRealityCheckIndex()];
   return {
-    title: `Study time, ${firstName}`,
-    body: subject ? `Your ${subject} notes are ready. A small session is a good start.` : "Take a few minutes for your CSBS goals. You can add today's study task in Prepwise."
+    title: `Your daily reality check, ${firstName}`,
+    body: realityCheck
   };
 }
 
+function dailyRealityCheckIndex(date = localDate()) {
+  const [year, month, day] = date.split("-").map(Number);
+  const dayOfYear = Math.floor((Date.UTC(year, month - 1, day) - Date.UTC(year, 0, 0)) / 86400000);
+  return dayOfYear % DAILY_REALITY_CHECKS.length;
+}
+
+function renderDailyRealityCheck() {
+  const date = localDate();
+  const dateLabel = document.getElementById("reality-check-date");
+  if (dateLabel.dataset.date === date) return;
+  dateLabel.dataset.date = date;
+  dateLabel.textContent = new Intl.DateTimeFormat(undefined, {
+    weekday: "long",
+    month: "short",
+    day: "numeric"
+  }).format(new Date(`${date}T00:00:00`));
+  document.getElementById("reality-check-message").textContent = DAILY_REALITY_CHECKS[dailyRealityCheckIndex(date)];
+}
+
 function checkDailyReminder() {
+  renderDailyRealityCheck();
   if (!state.profile.reminderEnabled || !state.profile.reminderTime || !("Notification" in window) || Notification.permission !== "granted") return;
   const now = new Date();
   const currentTime = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
@@ -883,6 +913,10 @@ document.getElementById("profile-reminder-enabled").addEventListener("change", a
 
 document.getElementById("reminder-button").addEventListener("click", openProfileDialog);
 document.getElementById("theme-button").addEventListener("click", toggleTheme);
+document.getElementById("reality-check-focus").addEventListener("click", () => {
+  changeView("overview");
+  if (!state.timerRunning) startTimer();
+});
 checkDailyReminder();
 window.setInterval(checkDailyReminder, 15000);
 document.addEventListener("visibilitychange", () => {

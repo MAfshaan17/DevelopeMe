@@ -12,7 +12,7 @@ This project is meant to support my own college routine, semester goals, and int
 - Plan your own study tasks by date, time, and duration.
 - Track focus sessions, completed tasks, and your active-day streak from activity you record.
 - Set your exam date and an optional weekly task goal.
-- Add a daily study reminder in **Student profile**. Choose a time and allow browser notifications when prompted. The app must remain open in a browser that supports notifications; reminders are not delivered while it is closed.
+- See a firm, supportive daily reality check on the dashboard. Use **Start a 25-min session** or **Plan one task** to turn it into action. Enable the daily reality-check notification and choose its time in **Student profile**; allow browser notifications when prompted. The app must remain open in a browser that supports notifications; reminders are not delivered while it is closed.
 - Keep your own GitHub, LinkedIn, and CSBS/AI/backend focus areas on your dashboard.
 
 Study profile, subjects, tasks, and completed focus sessions are saved in this browser's local storage. They are not currently synced between browsers or devices. Account registration is available through the existing API, but the study planner itself does not yet sync its data to that account.

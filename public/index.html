@@ -94,6 +94,19 @@
               <div class="hero-countdown" id="exam-countdown"><button class="exam-date-button" type="button" data-open-profile>Set exam date <span>→</span></button><div class="countdown-caption">Add your next exam to get a countdown.</div></div>
             </div>
 
+            <section class="reality-check-card" aria-labelledby="reality-check-title">
+              <div class="reality-check-copy">
+                <div class="reality-check-label"><span aria-hidden="true">!</span> DAILY REALITY CHECK <span id="reality-check-date"></span></div>
+                <h2 id="reality-check-title">A reminder for today</h2>
+                <p id="reality-check-message"></p>
+                <p class="reality-check-action">No perfect plan needed. Pick one useful thing and give it 25 focused minutes.</p>
+              </div>
+              <div class="reality-check-actions">
+                <button class="button button-primary" id="reality-check-focus" type="button">Start a 25-min session <span>→</span></button>
+                <button class="text-button" type="button" data-add-task>Plan one task</button>
+              </div>
+            </section>
+
             <section class="content-card focus-areas-card"><div class="card-heading"><div><div class="section-eyebrow">MY FOCUS</div><h2>What I'm learning</h2></div><button class="text-button" type="button" data-open-profile>Edit profile <span>→</span></button></div><div class="focus-area-list" id="focus-areas"></div></section>
 
             <div class="stats-grid">
@@ -199,7 +212,7 @@
         <div class="form-row"><div><label class="field-label" for="profile-semester">Current year / semester</label><input class="text-input" id="profile-semester" name="semester" maxlength="40" placeholder="e.g. 5th semester"></div><div><label class="field-label" for="profile-exam-date">Next exam date</label><input class="text-input" id="profile-exam-date" name="examDate" type="date"></div></div>
         <label class="field-label" for="profile-focus-areas">Your current focus areas</label><textarea class="text-input profile-focus-input" id="profile-focus-areas" name="focusAreas" maxlength="300" placeholder="Separate your focus areas with commas"></textarea>
         <label class="field-label" for="profile-weekly-goal">Weekly task goal (optional)</label><input class="text-input" id="profile-weekly-goal" name="weeklyGoal" type="number" min="1" max="100" placeholder="Set your own goal">
-        <div class="reminder-settings"><div><label class="field-label" for="profile-reminder-time">Daily study reminder</label><input class="text-input" id="profile-reminder-time" name="reminderTime" type="time"></div><label class="reminder-toggle" for="profile-reminder-enabled"><input id="profile-reminder-enabled" name="reminderEnabled" type="checkbox"><span><strong>Turn on reminder</strong><small>Notifications work while this app is open.</small></span></label></div>
+        <div class="reminder-settings"><div><label class="field-label" for="profile-reminder-time">Daily reality-check reminder</label><input class="text-input" id="profile-reminder-time" name="reminderTime" type="time"></div><label class="reminder-toggle" for="profile-reminder-enabled"><input id="profile-reminder-enabled" name="reminderEnabled" type="checkbox"><span><strong>Send me the daily nudge</strong><small>Notifications work while this app is open.</small></span></label></div>
         <div class="form-row"><div><label class="field-label" for="profile-github">GitHub profile</label><input class="text-input" id="profile-github" name="github" type="url" placeholder="https://github.com/username"></div><div><label class="field-label" for="profile-linkedin">LinkedIn profile</label><input class="text-input" id="profile-linkedin" name="linkedin" type="url" placeholder="https://linkedin.com/in/username"></div></div>
         <p class="auth-error" id="profile-error" role="alert"></p>
         <div class="dialog-actions"><button class="button button-quiet" id="account-button" type="button">Sign in</button><button class="button button-quiet" id="signout-button" type="button" hidden>Sign out</button><button class="button button-quiet" type="button" data-close-dialog>Cancel</button><button class="button button-primary" type="submit">Save my profile <span>→</span></button></div>

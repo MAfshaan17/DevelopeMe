@@ -124,6 +124,17 @@ h1 { margin-top: 8px; color: #25263b; font-size: clamp(24px, 3vw, 29px); font-we
 .exam-date-button { padding: 9px 11px; border: 1px solid #ddd8ff; border-radius: 8px; background: #fff; color: #6558d6; font-size: 9px; font-weight: 700; white-space: nowrap; }
 .exam-date-button:hover { border-color: #9c92ed; }
 .exam-date-button span { margin-left: 4px; }
+.reality-check-card { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-top: 14px; padding: 18px 20px; border: 1px solid #d5dfd8; border-left: 4px solid #39745e; border-radius: 6px; background: #eaf0eb; }
+.reality-check-copy { min-width: 0; max-width: 760px; }
+.reality-check-label { display: flex; align-items: center; gap: 7px; color: #355d48; font-size: 8px; font-weight: 800; letter-spacing: .8px; }
+.reality-check-label > span { display: grid; width: 17px; height: 17px; place-items: center; border: 1px solid currentColor; border-radius: 50%; font-size: 10px; }
+.reality-check-label #reality-check-date { margin-left: auto; color: #697671; font-size: 8px; font-weight: 600; letter-spacing: 0; }
+.reality-check-copy h2 { margin-top: 9px; color: #202b28; font-size: 16px; }
+.reality-check-copy > p { margin-top: 7px; color: #35423b; font-size: 11px; line-height: 1.65; }
+.reality-check-copy > .reality-check-action { color: #697671; font-size: 9px; }
+.reality-check-actions { display: grid; flex: 0 0 auto; justify-items: start; gap: 10px; }
+.reality-check-actions .button { min-height: 34px; }
+.reality-check-actions .text-button { padding-left: 3px; }
 .hero-decoration { position: absolute; border: 1px solid #dcd7ff; border-radius: 50%; }
 .hero-decoration, .hero-sparkle { display: none; }
 .hero-decoration-one { top: -90px; right: 137px; width: 220px; height: 220px; opacity: .46; }
@@ -497,6 +508,12 @@ h1 { margin-top: 8px; color: #25263b; font-size: clamp(24px, 3vw, 29px); font-we
 :root[data-theme="dark"] .toast { box-shadow: 0 8px 26px #0006; }
 :root[data-theme="dark"] .app-dialog::backdrop { background: #0009; }
 :root[data-theme="dark"] .hero-countdown .countdown-caption { color: var(--muted); }
+:root[data-theme="dark"] .reality-check-card { border-color: #3b4e42; border-left-color: #82b99a; background: #25332b; }
+:root[data-theme="dark"] .reality-check-label { color: #a1d0b4; }
+:root[data-theme="dark"] .reality-check-label #reality-check-date,
+:root[data-theme="dark"] .reality-check-copy > .reality-check-action { color: var(--muted); }
+:root[data-theme="dark"] .reality-check-copy h2,
+:root[data-theme="dark"] .reality-check-copy > p { color: var(--ink); }
 
 @media (min-width: 1450px) {
   .page-content { padding-top: 40px; }
@@ -512,6 +529,8 @@ h1 { margin-top: 8px; color: #25263b; font-size: clamp(24px, 3vw, 29px); font-we
   .subject-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .curriculum-courses { grid-template-columns: 1fr; }
   .hero-countdown { margin-right: 4px; }
+  .reality-check-card { align-items: flex-start; flex-direction: column; gap: 12px; }
+  .reality-check-actions { display: flex; flex-wrap: wrap; align-items: center; }
 }
 @media (max-width: 760px) {
   .sidebar { width: 248px; transform: translateX(-100%); transition: transform .22s ease; box-shadow: 14px 0 32px #1c1c3015; }
@@ -547,6 +566,8 @@ h1 { margin-top: 8px; color: #25263b; font-size: clamp(24px, 3vw, 29px); font-we
   .welcome-row > .button, .page-heading > .button { min-height: 34px; }
   h1 { font-size: 24px; }
   .hero-card { min-height: 170px; padding: 20px 17px; }
+  .reality-check-card { padding: 15px 13px; }
+  .reality-check-actions .button { min-height: 32px; }
   .hero-copy h2 { font-size: 19px; }
   .hero-copy p { max-width: 190px; font-size: 9px; line-height: 1.5; }
   .hero-countdown { width: 86px; margin: 0; }
