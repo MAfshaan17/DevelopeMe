@@ -131,7 +131,7 @@
             </div>
 
             <section class="content-card subjects-card">
-              <div class="card-heading"><div><div class="section-eyebrow">YOUR COURSES</div><h2>Your subjects</h2></div><button class="text-button" type="button" data-add-subject>Add subject <span>＋</span></button></div>
+              <div class="card-heading"><div><div class="section-eyebrow">COLLEGE + PERSONAL LEARNING</div><h2>My subjects & tracks</h2></div><button class="text-button" type="button" data-add-subject>Add subject or track <span>＋</span></button></div>
               <div class="subject-grid" id="overview-subjects"></div>
             </section>
             <footer class="footer-note"><span>Afshaan's CSBS study planner</span><span>JSS Science and Technology University · Mysuru</span></footer>
@@ -145,7 +145,12 @@
           </section>
 
           <section class="view-panel" id="view-subjects" aria-labelledby="subjects-title">
-            <div class="page-heading"><div><div class="eyebrow"><span class="eyebrow-dot"></span> YOUR COURSES, YOUR PROGRESS</div><h1 id="subjects-title">My subjects</h1><p class="welcome-subtitle">Add your current subjects and update progress as you study.</p></div><button class="button button-primary" type="button" data-add-subject><span class="plus-icon">＋</span> Add a subject</button></div>
+            <div class="page-heading"><div><div class="eyebrow"><span class="eyebrow-dot"></span> COLLEGE + PERSONAL LEARNING</div><h1 id="subjects-title">My subjects & tracks</h1><p class="welcome-subtitle">Keep college courses and things you're learning on your own in one place.</p></div><button class="button button-primary" type="button" data-add-subject><span class="plus-icon">＋</span> Add subject or track</button></div>
+            <div class="subject-filters" role="group" aria-label="Filter subjects and learning tracks">
+              <button class="filter-chip active" type="button" data-subject-filter="all">Everything</button>
+              <button class="filter-chip" type="button" data-subject-filter="college">College</button>
+              <button class="filter-chip" type="button" data-subject-filter="learning">Self-learning</button>
+            </div>
             <div class="subject-grid subject-grid-page" id="all-subjects"></div>
           </section>
 
@@ -164,6 +169,38 @@
             </section>
             <p class="curriculum-source" id="curriculum-source"></p>
             <div class="curriculum-courses" id="curriculum-courses"></div>
+            <section class="content-card drive-resources">
+              <div class="card-heading"><div><div class="section-eyebrow">YOUR SHARED GOOGLE DRIVE</div><h2>5th semester notes & syllabus</h2></div><a class="text-button" href="https://drive.google.com/drive/folders/1O80jwGsfws0cjUpMDQ4FmzHJ3_PgMEnE" target="_blank" rel="noopener noreferrer">Open full folder ↗</a></div>
+              <p class="drive-resource-note">These are links to files and folders shared with the link. They open in Google Drive; Prepwise does not copy or sync their contents.</p>
+              <div class="drive-resource-list">
+                <article class="drive-resource-item">
+                  <div><strong>24CB510 · Design and Analysis of Algorithms</strong><span>ADA Syllabus.pdf · Unit 1 Notes.pdf · Question Papers folder</span></div>
+                  <a class="button button-quiet" href="https://drive.google.com/file/d/15pFxYwNM7XxBJ_FuTSUnmJWnI5B-UqsE/view" target="_blank" rel="noopener noreferrer">Open syllabus</a>
+                  <a class="button button-quiet" href="https://drive.google.com/file/d/1kRKEF-N-kM-ys16uWdnioEJPW5bbdZEv/view" target="_blank" rel="noopener noreferrer">Open notes</a>
+                  <a class="text-button" href="https://drive.google.com/drive/folders/1ltPkBBuy9b3Mn1X9SIVGXipSDYY9vyOH" target="_blank" rel="noopener noreferrer">Question papers ↗</a>
+                </article>
+                <article class="drive-resource-item">
+                  <div><strong>24CB520 · Complier Designing</strong><span>Course folder</span></div>
+                  <a class="button button-quiet" href="https://drive.google.com/drive/folders/1kMxAOgXN82V3uGKL3_PFH8cZs2muGSy4" target="_blank" rel="noopener noreferrer">Open folder ↗</a>
+                </article>
+                <article class="drive-resource-item">
+                  <div><strong>24CB530 · Fundamentals Of Management</strong><span>Course folder</span></div>
+                  <a class="button button-quiet" href="https://drive.google.com/drive/folders/1sG62BCHzc4Ka1JQl8PBI2q9XYWo0WVI3" target="_blank" rel="noopener noreferrer">Open folder ↗</a>
+                </article>
+                <article class="drive-resource-item">
+                  <div><strong>24CB540 · Business Strategy</strong><span>Course folder</span></div>
+                  <a class="button button-quiet" href="https://drive.google.com/drive/folders/17yC-dfCcTU7j-l5tRcjUznx1bmY2c8H2" target="_blank" rel="noopener noreferrer">Open folder ↗</a>
+                </article>
+                <article class="drive-resource-item">
+                  <div><strong>24CB550 · Design Thinking</strong><span>Course folder</span></div>
+                  <a class="button button-quiet" href="https://drive.google.com/drive/folders/1dCCm7WPf14JNlITPw37l699gKKnjctK6" target="_blank" rel="noopener noreferrer">Open folder ↗</a>
+                </article>
+                <article class="drive-resource-item">
+                  <div><strong>24CB562 · Cloud, Micro services & Application</strong><span>Professional Elective I course folder</span></div>
+                  <a class="button button-quiet" href="https://drive.google.com/drive/folders/1ORdP3eW8xxrSoO_JXt9qBwhiu4jvSUoR" target="_blank" rel="noopener noreferrer">Open folder ↗</a>
+                </article>
+              </div>
+            </section>
           </section>
 
           <section class="view-panel" id="view-practice" aria-labelledby="practice-title">
@@ -195,9 +232,10 @@
 
     <dialog class="app-dialog" id="subject-dialog">
       <form class="dialog-content" id="subject-form">
-        <div class="dialog-top"><div><div class="section-eyebrow">YOUR COLLEGE COURSES</div><h2 id="subject-dialog-title">Add a subject</h2></div><button class="icon-button dialog-close" type="button" data-close-dialog aria-label="Close dialog">×</button></div>
-        <label class="field-label" for="subject-name">Subject name</label><input class="text-input" id="subject-name" name="name" maxlength="60" placeholder="Enter one of your current subjects" required>
-        <label class="field-label" for="subject-detail">Course code or notes (optional)</label><input class="text-input" id="subject-detail" name="detail" maxlength="100" placeholder="Add a course code, instructor, or topic">
+        <div class="dialog-top"><div><div class="section-eyebrow">YOUR LEARNING, YOUR WAY</div><h2 id="subject-dialog-title">Add a subject or track</h2></div><button class="icon-button dialog-close" type="button" data-close-dialog aria-label="Close dialog">×</button></div>
+        <label class="field-label" for="subject-kind">What kind of track is this?</label><select class="text-input" id="subject-kind" name="kind"><option value="college">College subject</option><option value="learning">Self-learning track (AI, DSA, projects…)</option></select>
+        <label class="field-label" for="subject-name">Name</label><input class="text-input" id="subject-name" name="name" maxlength="60" placeholder="e.g. Compiler Design, AI, DSA, backend projects" required>
+        <label class="field-label" for="subject-detail">Course code, goal, or notes (optional)</label><input class="text-input" id="subject-detail" name="detail" maxlength="100" placeholder="e.g. 24CB520 · graphs · build a small RAG app">
         <label class="field-label" for="subject-progress-input">Your current progress <span id="subject-progress-value">0%</span></label><input class="range-input" id="subject-progress-input" name="progress" type="range" min="0" max="100" value="0">
         <div class="dialog-actions"><button class="button button-quiet" type="button" data-close-dialog>Cancel</button><button class="button button-primary" id="subject-submit-label" type="submit">Add subject <span>→</span></button></div>
       </form>

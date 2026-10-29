@@ -219,6 +219,8 @@ h1 { margin-top: 8px; color: #25263b; font-size: clamp(24px, 3vw, 29px); font-we
 .subject-item h3 { overflow: hidden; color: #3e4054; font-size: 10px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
 .subject-item p { margin-top: 3px; color: #9b9baa; font-size: 8px; }
 .subject-top > div { min-width: 0; flex: 1; }
+.subject-kind { padding: 4px 6px; border: 1px solid var(--line); border-radius: 4px; color: var(--muted); font-size: 7px; white-space: nowrap; }
+.subject-kind.kind-learning { border-color: #b6d0c0; color: #39745e; }
 .subject-delete { width: 22px; height: 22px; flex: 0 0 auto; border: 0; border-radius: 6px; background: transparent; color: #a7a7b3; font-size: 15px; }
 .subject-delete:hover { background: #fff0ee; color: #cf7565; }
 .subject-edit { width: 22px; height: 22px; flex: 0 0 auto; border: 0; border-radius: 6px; background: transparent; color: #8e87c7; font-size: 12px; }
@@ -251,6 +253,17 @@ h1 { margin-top: 8px; color: #25263b; font-size: clamp(24px, 3vw, 29px); font-we
 .status-upcoming { background: #fff3e8; color: #ad7438; }
 .curriculum-source { margin: 11px 2px 0; color: #89899b; font-size: 9px; line-height: 1.6; }
 .curriculum-courses { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 13px; }
+.drive-resources { margin-top: 18px; padding: 18px 20px; }
+.drive-resources .card-heading h2 { margin-top: 5px; color: var(--ink); font-size: 16px; }
+.drive-resource-note { margin-top: 11px; color: var(--muted); font-size: 9px; line-height: 1.6; }
+.drive-resource-list { display: grid; gap: 8px; margin-top: 14px; }
+.drive-resource-item { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 11px; border: 1px solid var(--line); border-radius: 6px; background: var(--paper); }
+.drive-resource-item > div { min-width: 220px; flex: 1; }
+.drive-resource-item strong, .drive-resource-item span { display: block; }
+.drive-resource-item strong { color: var(--ink); font-size: 10px; line-height: 1.5; }
+.drive-resource-item span { margin-top: 3px; color: var(--muted); font-size: 8px; line-height: 1.5; }
+.drive-resource-item .button { min-height: 31px; padding-inline: 10px; font-size: 9px; }
+.drive-resource-item .text-button { font-size: 9px; }
 .curriculum-course { min-width: 0; padding: 15px; border: 1px solid var(--line); border-radius: 6px; background: var(--paper); }
 .curriculum-course-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
 .curriculum-course-heading > div:first-child { min-width: 0; }
@@ -270,6 +283,9 @@ h1 { margin-top: 8px; color: #25263b; font-size: clamp(24px, 3vw, 29px); font-we
 .elective-option .curriculum-add-button { margin-top: 0; }
 
 .page-heading { margin-bottom: 23px; }
+.subject-filters { display: flex; flex-wrap: wrap; gap: 5px; width: fit-content; margin: -7px 0 2px; padding: 4px; border: 1px solid var(--line); border-radius: 5px; background: var(--paper); }
+.subject-filters .filter-chip { min-height: 29px; padding-inline: 12px; }
+.subject-filters .filter-chip.active { background: var(--purple-pale); color: var(--purple-dark); box-shadow: none; }
 .page-heading h1 { margin-top: 9px; }
 .plan-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px; margin-bottom: 17px; }
 .plan-summary-card { display: flex; align-items: center; gap: 11px; padding: 14px 16px; border: 1px solid #efeff5; border-radius: 10px; background: white; }
@@ -382,6 +398,7 @@ h1 { margin-top: 8px; color: #25263b; font-size: clamp(24px, 3vw, 29px); font-we
 :root[data-theme="dark"] .schedule-title,
 :root[data-theme="dark"] .timer-display,
 :root[data-theme="dark"] .subject-item h3,
+:root[data-theme="dark"] .subject-kind,
 :root[data-theme="dark"] .curriculum-course h3,
 :root[data-theme="dark"] .curriculum-semester-heading h2,
 :root[data-theme="dark"] .plan-summary-copy strong,
@@ -476,6 +493,11 @@ h1 { margin-top: 8px; color: #25263b; font-size: clamp(24px, 3vw, 29px); font-we
 :root[data-theme="dark"] .subject-progress-label strong,
 :root[data-theme="dark"] .weekly-goal-button strong,
 :root[data-theme="dark"] .reminder-toggle strong { color: var(--ink); }
+:root[data-theme="dark"] .subject-kind { border-color: #46534b; }
+:root[data-theme="dark"] .subject-kind.kind-learning { color: #a1d0b4; }
+:root[data-theme="dark"] .subject-filters { border-color: var(--line); background: var(--paper); }
+:root[data-theme="dark"] .subject-filters .filter-chip { color: var(--muted); }
+:root[data-theme="dark"] .subject-filters .filter-chip.active { background: #293a31; color: var(--purple-dark); }
 :root[data-theme="dark"] .mini-bars i,
 :root[data-theme="dark"] .progress-track,
 :root[data-theme="dark"] .timer-progress,
@@ -528,6 +550,7 @@ h1 { margin-top: 8px; color: #25263b; font-size: clamp(24px, 3vw, 29px); font-we
   .page-content { padding-inline: 25px; }
   .subject-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .curriculum-courses { grid-template-columns: 1fr; }
+  .drive-resource-item > div { min-width: 100%; }
   .hero-countdown { margin-right: 4px; }
   .reality-check-card { align-items: flex-start; flex-direction: column; gap: 12px; }
   .reality-check-actions { display: flex; flex-wrap: wrap; align-items: center; }
@@ -550,6 +573,7 @@ h1 { margin-top: 8px; color: #25263b; font-size: clamp(24px, 3vw, 29px); font-we
   .timer-display { margin-top: 22px; }
   .timer-progress { margin-top: 19px; }
   .subject-grid-page { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .subject-filters { margin-top: -3px; }
   .curriculum-overview { padding: 14px 12px 12px; }
   .plan-summary { gap: 8px; }
   .plan-summary-card { gap: 7px; padding: 12px 9px; }
@@ -596,6 +620,7 @@ h1 { margin-top: 8px; color: #25263b; font-size: clamp(24px, 3vw, 29px); font-we
   .schedule-duration { font-size: 7px; }
   .subject-grid { gap: 8px; }
   .subject-item { padding: 10px 8px; }
+  .subject-kind { font-size: 6px; padding: 3px 4px; }
   .subject-grid-page { gap: 9px; }
   .subject-grid-page .subject-item { padding: 12px 9px; }
   .subject-grid-page .subject-icon { width: 32px; height: 32px; font-size: 14px; }

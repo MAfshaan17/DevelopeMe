@@ -6,7 +6,8 @@ This project is meant to support my own college routine, semester goals, and int
 
 ## My study space
 
-- Add only the subjects which are actually iam  taking and update each subject's progress.
+- Add the subjects I am actually taking and update each subject's progress.
+- Add your own **Self-learning** tracks (for example AI, DSA, backend, or projects) alongside College courses from **My subjects & tracks**. Filter the list by College or Self-learning and add tasks for either.
 - Check the **CSBS curriculum** view for the official Semester I–V courses from the 2024-25 JSS STU scheme (PDF pages 35–40). Semester I–IV are marked complete and Semester V in progress based on the timeline you shared; no marks or individual course progress are assumed. The five non-elective Semester V courses are added to **My subjects** once, with progress left untracked until you set it. Add other listed courses when you want to plan or track them.
 - The scheme gives practical/lab hours as **P** alongside course lecture/tutorial hours. It does not list stand-alone lab course titles for these semesters, so none are invented. The Semester V Professional Elective I choices are shown without assuming which one you selected; the Open Elective title remains yours to enter.
 - Plan your own study tasks by date, time, and duration.
@@ -14,8 +15,11 @@ This project is meant to support my own college routine, semester goals, and int
 - Set your exam date and an optional weekly task goal.
 - See a firm, supportive daily reality check on the dashboard. Use **Start a 25-min session** or **Plan one task** to turn it into action. Enable the daily reality-check notification and choose its time in **Student profile**; allow browser notifications when prompted. The app must remain open in a browser that supports notifications; reminders are not delivered while it is closed.
 - Keep your own GitHub, LinkedIn, and CSBS/AI/backend focus areas on your dashboard.
+- Open the **CSBS curriculum** view for links to your shared Semester V Google Drive folders. The ADA folder has direct links to `ADA Syllabus.pdf`, `Unit 1 Notes.pdf`, and its Question Papers folder; the other course folders are linked too.
 
 Study profile, subjects, tasks, and completed focus sessions are saved in this browser's local storage. They are not currently synced between browsers or devices. Account registration is available through the existing API, but the study planner itself does not yet sync its data to that account.
+
+The Drive links open the shared Google Drive folders and files in a new tab; Prepwise does not import, copy, or automatically sync their contents. A live, signed-in Drive integration would need Google OAuth credentials and explicit folder access; the app does not collect Google passwords or scrape private Drive links.
 
 ## Run locally
 

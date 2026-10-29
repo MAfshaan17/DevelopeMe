@@ -206,6 +206,7 @@ const state = {
   filter: "all",
   currentView: "overview",
   currentSemester: 5,
+  subjectFilter: "all",
   authMode: "login",
   editingSubjectId: null,
   profile: readProfile(),
@@ -299,7 +300,11 @@ function compareTasks(first, second) {
 function renderSubjects(targetId, limit = Number.POSITIVE_INFINITY) {
   const target = document.getElementById(targetId);
   if (!target) return;
-  const subjects = state.subjects.slice(0, limit);
+  const isSubjectPage = targetId === "all-subjects";
+  const filtered = isSubjectPage && state.subjectFilter !== "all"
+    ? state.subjects.filter((subject) => (subject.kind || "college") === state.subjectFilter)
+    : state.subjects;
+  const subjects = filtered.slice(0, limit);
   target.innerHTML = subjects.length ? subjects.map((subject) => {
     const style = SUBJECT_STYLES[subject.styleIndex % SUBJECT_STYLES.length];
     const progress = subject.progressTracked === false
@@ -310,14 +315,15 @@ function renderSubjects(targetId, limit = Number.POSITIVE_INFINITY) {
       <article class="subject-item" style="--subject-color:${style.color}">
         <div class="subject-top">
           <span class="subject-icon" style="background:${style.background};color:${style.color}" aria-hidden="true">${style.icon}</span>
-          <div><h3>${escapeHtml(subject.name)}</h3><p>${escapeHtml(subject.detail || "Add a course note in your subject settings")}</p></div>
+          <div><h3>${escapeHtml(subject.name)}</h3><p>${escapeHtml(subject.detail || (subject.kind === "learning" ? "Personal learning track" : "College subject"))}</p></div>
+          <span class="subject-kind${subject.kind === "learning" ? " kind-learning" : ""}">${subject.kind === "learning" ? "Self-learning" : "College"}</span>
           <button class="subject-edit" type="button" data-edit-subject="${escapeHtml(subject.id)}" aria-label="Edit ${escapeHtml(subject.name)}">✎</button>
           <button class="subject-delete" type="button" data-delete-subject="${escapeHtml(subject.id)}" aria-label="Remove ${escapeHtml(subject.name)}">×</button>
         </div>
         ${progress}
       </article>
     `;
-  }).join("") : `<div class="empty-state"><span class="empty-state-icon">＋</span><h3>No subjects yet</h3><p>Add your current courses to organize your semester.</p><button class="button button-primary" type="button" data-add-subject>Add your first subject <span>→</span></button></div>`;
+  }).join("") : `<div class="empty-state"><span class="empty-state-icon">＋</span><h3>${isSubjectPage && state.subjectFilter !== "all" ? "Nothing here yet" : "No subjects or tracks yet"}</h3><p>${state.subjectFilter === "learning" ? "Add anything you are learning outside class, like AI, DSA, or a personal project." : "Add a college course or create your own self-learning track."}</p><button class="button button-primary" type="button" data-add-subject>Add your first track <span>→</span></button></div>`;
 }
 
 function profileSemesterNumber() {
@@ -586,6 +592,9 @@ function renderAll() {
   renderOverview();
   renderPlan();
   renderSubjects("all-subjects");
+  document.querySelectorAll("[data-subject-filter]").forEach((button) => {
+    button.classList.toggle("active", button.dataset.subjectFilter === state.subjectFilter);
+  });
   renderCurriculum();
   renderPractice();
   renderProgress();
@@ -720,8 +729,9 @@ function openSubjectDialog(subjectId = "") {
   form.reset();
   state.editingSubjectId = subjectId;
   const subject = state.subjects.find((item) => item.id === subjectId);
-  document.getElementById("subject-dialog-title").textContent = subject ? "Edit subject" : "Add a subject";
-  document.getElementById("subject-submit-label").innerHTML = `${subject ? "Save changes" : "Add subject"} <span>→</span>`;
+  document.getElementById("subject-dialog-title").textContent = subject ? "Edit subject or track" : "Add a subject or track";
+  document.getElementById("subject-submit-label").innerHTML = `${subject ? "Save changes" : "Add to my list"} <span>→</span>`;
+  document.getElementById("subject-kind").value = subject?.kind || "college";
   document.getElementById("subject-name").value = subject?.name || "";
   document.getElementById("subject-detail").value = subject?.detail || "";
   document.getElementById("subject-progress-input").value = String(subject?.progress ?? 0);
@@ -742,6 +752,7 @@ function addCurriculumCourse(code, name) {
     progress: 0,
     progressTracked: false,
     curriculumCode: code,
+    kind: "college",
     styleIndex: state.subjects.length % SUBJECT_STYLES.length
   });
   persistSubjects();
@@ -959,6 +970,14 @@ document.addEventListener("click", (event) => {
     state.filter = filter.dataset.filter;
     renderPlan();
   }
+  const subjectFilter = target.closest("[data-subject-filter]");
+  if (subjectFilter) {
+    state.subjectFilter = subjectFilter.dataset.subjectFilter;
+    renderSubjects("all-subjects");
+    document.querySelectorAll("[data-subject-filter]").forEach((button) => {
+      button.classList.toggle("active", button.dataset.subjectFilter === state.subjectFilter);
+    });
+  }
   const authTab = target.closest("[data-auth-mode]");
   if (authTab) setAuthMode(authTab.dataset.authMode);
   const practice = target.closest("[data-practice-subject]");
@@ -1008,6 +1027,7 @@ document.getElementById("subject-form").addEventListener("submit", (event) => {
   event.preventDefault();
   const data = new FormData(event.currentTarget);
   const name = String(data.get("name") || "").trim();
+  const kind = data.get("kind") === "learning" ? "learning" : "college";
   if (state.subjects.some((subject) => subject.id !== state.editingSubjectId && subject.name.toLocaleLowerCase() === name.toLocaleLowerCase())) {
     showToast("That subject is already in your list.");
     return;
@@ -1019,6 +1039,7 @@ document.getElementById("subject-form").addEventListener("submit", (event) => {
       subject.detail = String(data.get("detail") || "").trim();
       subject.progress = Number(data.get("progress"));
       subject.progressTracked = true;
+      subject.kind = kind;
     }
   } else {
     state.subjects.push({
@@ -1027,6 +1048,7 @@ document.getElementById("subject-form").addEventListener("submit", (event) => {
       detail: String(data.get("detail") || "").trim(),
       progress: Number(data.get("progress")),
       progressTracked: true,
+      kind,
       styleIndex: state.subjects.length % SUBJECT_STYLES.length
     });
   }
