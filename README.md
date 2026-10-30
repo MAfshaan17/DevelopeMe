@@ -1,36 +1,84 @@
-# STUDY SPACE
+# Prepwise — CSBS Study Space
 
-A personal study planner for **MYSELF**, a **5th-semester B.E. Computer Science and Business Systems student at JSS Science and Technology University, Mysuru**.
+Prepwise is a personal study planner for a B.E. Computer Science and Business Systems (CSBS) student at JSS Science and Technology University, Mysuru. It helps organize college subjects and self-learning, plan study time, and review recorded progress.
 
-This project is meant to support my own college routine, semester goals, and interests—not to show made-up courses or sample activity. My profile starts with my own details and the focus areas from my [public GitHub profile](https://github.com/MAfshaan17). Edit these any time from **Student profile**.
+The profile and curriculum content are tailored to this study space. Update your student details, subjects, and learning goals in the app to make it your own.
 
-## My study space
+## What the website does
 
-- Add the subjects I am actually taking and update each subject's progress.
-- Add your own **Self-learning** tracks (for example AI, DSA, backend, or projects) alongside College courses from **My subjects & tracks**. Filter the list by College or Self-learning and add tasks for either.
-- Check the **CSBS curriculum** view for the official Semester I–V courses from the 2024-25 JSS STU scheme (PDF pages 35–40). Semester I–IV are marked complete and Semester V in progress based on the timeline you shared; no marks or individual course progress are assumed. The five non-elective Semester V courses are added to **My subjects** once, with progress left untracked until you set it. Add other listed courses when you want to plan or track them.
-- The scheme gives practical/lab hours as **P** alongside course lecture/tutorial hours. It does not list stand-alone lab course titles for these semesters, so none are invented. The Semester V Professional Elective I choices are shown without assuming which one you selected; the Open Elective title remains yours to enter.
-- Plan your own study tasks by date, time, and duration.
-- Track focus sessions, completed tasks, and your active-day streak from activity you record.
-- Set your exam date and an optional weekly task goal.
-- See a firm, supportive daily reality check on the dashboard. Use **Start a 25-min session** or **Plan one task** to turn it into action. Enable the daily reality-check notification and choose its time in **Student profile**; allow browser notifications when prompted. The app must remain open in a browser that supports notifications; reminders are not delivered while it is closed.
-- Keep your own GitHub, LinkedIn, and CSBS/AI/backend focus areas on your dashboard.
-- Open the **CSBS curriculum** view for links to your shared Semester V Google Drive folders. The ADA folder has direct links to `ADA Syllabus.pdf`, `Unit 1 Notes.pdf`, and its Question Papers folder; the other course folders are linked too.
+- **Overview:** See your study dashboard, exam countdown, study streak, focus areas, and daily reality check. Use the quick actions to plan a task or start a 25-minute focus session.
+- **My study plan:** Add tasks with a title, optional subject, date, optional start time, and planned duration. Mark tasks complete or manage them from your plan.
+- **My subjects:** Add and update college subjects or self-learning tracks, such as AI, DSA, backend development, or projects. Filter subjects by track type and review their progress.
+- **CSBS curriculum:** Browse the Semester I–V courses from the 2024–25 JSS STU scheme. Add curriculum courses to your subjects when you want to track them. The semester status is informational; course progress is not assumed.
+- **Practice tests:** Use your subjects to plan practice time. This page helps you organize practice; it does not provide an automated quiz or question bank.
+- **Progress:** Review completed tasks, focus sessions, streaks, weekly focus time, and subject progress recorded in the app.
+- **Focus timer:** Start and reset a focus session. Completed sessions contribute to your recorded progress.
+- **Student profile:** Edit your profile, focus areas, social links, exam date, and optional weekly task goal.
+- **Theme and reminders:** Switch between light and dark themes. You can enable a daily browser notification and select its time in your profile. Grant notification permission when prompted; reminders require Prepwise to remain open in a browser that supports notifications.
+- **Study resources:** Open the shared Google Drive course folders and files from the curriculum page. These are external links; Prepwise does not import or sync their contents.
 
-Study profile, subjects, tasks, and completed focus sessions are saved in this browser's local storage. They are not currently synced between browsers or devices. Account registration is available through the existing API, but the study planner itself does not yet sync its data to that account.
+## Data and accounts
 
-The Drive links open the shared Google Drive folders and files in a new tab; Prepwise does not import, copy, or automatically sync their contents. A live, signed-in Drive integration would need Google OAuth credentials and explicit folder access; the app does not collect Google passwords or scrape private Drive links.
+Study profile, subjects, tasks, theme, and completed focus sessions are saved in the current browser's local storage. They are not synced between browsers or devices, and clearing that browser's site data may remove them.
+
+The server also provides account registration, sign-in, and sign-out endpoints. Accounts are stored in MongoDB, and authentication uses an HTTP-only cookie. Account sign-in does **not** currently sync the planner's local data to MongoDB.
 
 ## Run locally
 
-1. Install dependencies with `npm install`.
-2. Set `PORT`, `MONGO_URL`, and `JWT_SECRET` in `.env` if you want to use account registration and sign-in.
-3. Start Prepwise with `npm run dev`.
-4. Open [http://localhost:3000](http://localhost:3000).
+### Requirements
 
-## Existing API
+- Node.js and npm
+- MongoDB, if you want to use account registration or sign-in
 
-- `POST /api/auth/register` — create an account
-- `POST /api/auth/login` — sign in
-- `GET /api/auth/logout` — sign out
-- `GET /api/health` — check that the server is responding
+### Install and start
+
+Run these commands in PowerShell from the project folder:
+
+```powershell
+npm install
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) in your browser. The `dev` script starts `server.js` with Nodemon, which restarts the server when files change.
+
+To use a different port, set `PORT` in a `.env` file before starting the server:
+
+```env
+PORT=4000
+```
+
+Then open `http://localhost:4000`.
+
+### Configure account features
+
+Create a `.env` file in the project root and set a MongoDB connection string and a private JWT signing secret:
+
+```env
+MONGO_URL=your-mongodb-connection-string
+JWT_SECRET=your-private-secret
+PORT=3000
+```
+
+Replace the example values with your own; do not commit `.env` or share its secrets. The server serves the website without account configuration, but account endpoints require a working MongoDB connection and `JWT_SECRET`.
+
+## Available npm commands
+
+| Command | What it does |
+| --- | --- |
+| `npm install` | Installs the dependencies listed in `package.json`. |
+| `npm run dev` | Starts the local Express server with Nodemon. |
+
+There is no production build or configured test suite in `package.json` yet.
+
+## API endpoints
+
+The Express server serves the website from `public/` and exposes these endpoints:
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `GET` | `/api/health` | Returns `{ "status": "ok" }` when the server is responding. |
+| `POST` | `/api/auth/register` | Creates an account. Send JSON with `username`, `email`, and `password`. |
+| `POST` | `/api/auth/login` | Signs in with JSON containing `email` and `password`. |
+| `GET` | `/api/auth/logout` | Clears the authentication cookie and signs out. |
+
+Registration and login set an HTTP-only `token` cookie. These endpoints authenticate users only; they do not save or retrieve study planner data.
