@@ -29,6 +29,20 @@
   --navy: #dce9df;
 }
 
+:root[data-theme="calm"] {
+  color-scheme: light;
+  --ink: #382f28;
+  --muted: #817362;
+  --line: #e4d8c8;
+  --paper: #fffaf1;
+  --canvas: #f2eadc;
+  --purple: #a36f42;
+  --purple-dark: #80522e;
+  --purple-pale: #f1e2cf;
+  --green: #8b7045;
+  --navy: #4d3c2d;
+}
+
 * { box-sizing: border-box; }
 body { margin: 0; min-width: 320px; background: var(--canvas); color: var(--ink); transition: background-color .18s ease, color .18s ease; }
 button, input, select { font: inherit; }
@@ -322,6 +336,7 @@ h1 { margin-top: 8px; color: #25263b; font-size: clamp(24px, 3vw, 29px); font-we
 .practice-card h3 { color: #3f4054; font-size: 12px; }
 .practice-card p { margin-top: 4px; color: #9999a8; font-size: 9px; }
 .practice-card .button { margin-top: 15px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; clip-path: inset(50%); }
 .empty-state { grid-column: 1 / -1; display: flex; min-height: 174px; flex-direction: column; align-items: center; justify-content: center; padding: 20px; border: 1px dashed #dedced; border-radius: 10px; background: #fdfdff; text-align: center; }
 .empty-state-icon { display: grid; width: 33px; height: 33px; place-items: center; border-radius: 11px; background: #f0efff; color: #7669e8; font-size: 17px; }
 .empty-state h3 { margin-top: 10px; color: #414257; font-family: Manrope, sans-serif; font-size: 12px; }

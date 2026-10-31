@@ -16,10 +16,23 @@ This project is meant to support my own college routine, semester goals, and int
 - See a firm, supportive daily reality check on the dashboard. Use **Start a 25-min session** or **Plan one task** to turn it into action. Enable the daily reality-check notification and choose its time in **Student profile**; allow browser notifications when prompted. The app must remain open in a browser that supports notifications; reminders are not delivered while it is closed.
 - Keep your own GitHub, LinkedIn, and CSBS/AI/backend focus areas on your dashboard.
 - Open the **CSBS curriculum** view for links to your shared Semester V Google Drive folders. The ADA folder has direct links to `ADA Syllabus.pdf`, `Unit 1 Notes.pdf`, and its Question Papers folder; the other course folders are linked too.
+- Import your YouTube watch history in the **YouTube history** view and search titles or channel names using your subjects and focus areas.
 
-Study profile, subjects, tasks, and completed focus sessions are saved in this browser's local storage. They are not currently synced between browsers or devices. Account registration is available through the existing API, but the study planner itself does not yet sync its data to that account.
+Study profile, subjects, tasks, completed focus sessions, and imported YouTube history are saved in this browser's local storage. They are not currently synced between browsers or devices. Account registration is available through the existing API, but the study planner itself does not yet sync its data to that account.
 
 The Drive links open the shared Google Drive folders and files in a new tab; Prepwise does not import, copy, or automatically sync their contents. A live, signed-in Drive integration would need Google OAuth credentials and explicit folder access; the app does not collect Google passwords or scrape private Drive links.
+
+## Import YouTube watch history
+
+YouTube does not provide apps access to your private watch history through its API. To see watched videos in Prepwise, export your history yourself and import the `watch-history.json` file:
+
+1. Open [Google Takeout](https://takeout.google.com/) and sign in to your Google account.
+2. Select the YouTube and YouTube Music data that includes your history, then create and download an export.
+3. Extract the downloaded archive and locate `watch-history.json`.
+4. In Prepwise, open **YouTube history** and choose that JSON file.
+5. Search titles and channel names, or select a chip matching one of your subjects or focus areas. Matching is text-based; the app does not infer a video's subject from its content.
+
+The JSON is processed in your browser and is not uploaded to Prepwise's server. The imported entries are saved in that browser's local storage; up to the 1,000 most recent entries are kept. Use **Clear imported history** to remove them from this browser.
 
 ## Run locally
 

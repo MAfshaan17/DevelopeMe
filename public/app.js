@@ -8,6 +8,7 @@ const SESSIONS_KEY = "prepwise.sessions.v1";
 const PROFILE_KEY = "prepwise.student-profile.v1";
 const ACCOUNT_KEY = "prepwise.profile.v1";
 const THEME_KEY = "prepwise.theme.v1";
+const TIMER_KEY = "prepwise.timer.v1";
 const PROFILE_DEFAULTS = {
   name: "Mahammad Afshaan",
   college: "JSS Science and Technology University, Mysuru",
@@ -199,6 +200,44 @@ function escapeHtml(value) {
   })[character]);
 }
 
+
+
+function readSavedTimer() {
+  const initial = {
+    secondsLeft: 25 * 60,
+    duration: 25 * 60,
+    running: false,
+    isBreak: false,
+    endsAt: null,
+    phaseId: ""
+  };
+  try {
+    const saved = JSON.parse(localStorage.getItem(TIMER_KEY) || "null");
+    if (!saved || typeof saved !== "object"
+      || !Number.isFinite(saved.duration)
+      || !Number.isFinite(saved.secondsLeft)
+      || typeof saved.running !== "boolean"
+      || typeof saved.isBreak !== "boolean"
+      || (saved.running && (!Number.isFinite(saved.endsAt) || typeof saved.phaseId !== "string"))) return initial;
+    const secondsLeft = saved.running
+      ? Math.max(0, Math.ceil((saved.endsAt - Date.now()) / 1000))
+      : Math.max(0, Math.ceil(saved.secondsLeft));
+    return {
+      secondsLeft,
+      duration: saved.duration,
+      running: saved.running,
+      isBreak: saved.isBreak,
+      endsAt: saved.running ? saved.endsAt : null,
+      phaseId: saved.phaseId || ""
+    };
+  } catch (error) {
+    console.error("Could not load the saved focus timer:", error);
+    return initial;
+  }
+}
+
+const savedTimer = readSavedTimer();
+
 const state = {
   tasks: readTasks(),
   subjects: readCollection(SUBJECTS_KEY, (subject) => subject && typeof subject.id === "string" && typeof subject.name === "string" && typeof subject.progress === "number", "Saved subjects are not valid."),
@@ -211,10 +250,12 @@ const state = {
   editingSubjectId: null,
   profile: readProfile(),
   account: readAccount(),
-  secondsLeft: 25 * 60,
-  timerDuration: 25 * 60,
-  timerRunning: false,
-  timerBreak: false,
+  secondsLeft: savedTimer.secondsLeft,
+  timerDuration: savedTimer.duration,
+  timerRunning: savedTimer.running,
+  timerBreak: savedTimer.isBreak,
+  timerEndsAt: savedTimer.endsAt,
+  timerPhaseId: savedTimer.phaseId,
   timerInterval: null
 };
 
@@ -238,6 +279,8 @@ function persistSubjects() {
 function persistSessions() {
   persist(SESSIONS_KEY, state.sessions, "focus sessions");
 }
+
+
 
 function showToast(message) {
   const region = document.getElementById("toast-region");
@@ -517,6 +560,82 @@ function renderProgress() {
   renderSubjects("progress-subjects", 4);
 }
 
+function saveTimerState() {
+  const timer = {
+    secondsLeft: state.secondsLeft,
+    duration: state.timerDuration,
+    running: state.timerRunning,
+    isBreak: state.timerBreak,
+    endsAt: state.timerRunning ? state.timerEndsAt : null,
+    phaseId: state.timerPhaseId
+  };
+  try {
+    localStorage.setItem(TIMER_KEY, JSON.stringify(timer));
+  } catch (error) {
+    console.error("Could not save the focus timer:", error);
+    showToast("Your focus timer could not be saved in this browser.");
+  }
+}
+
+function syncTimerFromStorage() {
+  const timer = readSavedTimer();
+  state.secondsLeft = timer.secondsLeft;
+  state.timerDuration = timer.duration;
+  state.timerRunning = timer.running;
+  state.timerBreak = timer.isBreak;
+  state.timerEndsAt = timer.endsAt;
+  state.timerPhaseId = timer.phaseId;
+  window.clearInterval(state.timerInterval);
+  state.timerInterval = null;
+  if (state.timerRunning) state.timerInterval = window.setInterval(updateTimer, 1000);
+  updateTimer();
+}
+
+function finishTimerPhase() {
+  const completedBreak = state.timerBreak;
+  const completedPhaseId = state.timerPhaseId;
+  state.timerRunning = false;
+  state.timerEndsAt = null;
+  window.clearInterval(state.timerInterval);
+  state.timerInterval = null;
+
+  if (!completedBreak && completedPhaseId) {
+    try {
+      if (localStorage.getItem(`${TIMER_KEY}.completed`) !== completedPhaseId) {
+        localStorage.setItem(`${TIMER_KEY}.completed`, completedPhaseId);
+        state.sessions.push({ date: localDate(), minutes: state.timerDuration / 60 });
+        persistSessions();
+        renderAll();
+      }
+    } catch (error) {
+      console.error("Could not record the completed focus session:", error);
+      showToast("Your completed focus session could not be saved.");
+    }
+  }
+
+  state.timerBreak = !completedBreak;
+  state.timerDuration = state.timerBreak ? 5 * 60 : 25 * 60;
+  state.secondsLeft = state.timerDuration;
+  state.timerPhaseId = "";
+  saveTimerState();
+  setTimerDisplay();
+
+  const message = completedBreak
+    ? "Break's over. Ready for another focus session?"
+    : "Focus session complete. Take a well-earned 5-minute break!";
+  showToast(message);
+  if (document.hidden && "Notification" in window && Notification.permission === "granted") {
+    new Notification("Prepwise focus timer", { body: message, tag: `prepwise-focus-${completedPhaseId || Date.now()}` });
+  }
+}
+
+function updateTimer() {
+  if (!state.timerRunning) return;
+  state.secondsLeft = Math.max(0, Math.ceil((state.timerEndsAt - Date.now()) / 1000));
+  setTimerDisplay();
+  if (state.secondsLeft === 0) finishTimerPhase();
+}
+
 function renderWeekBars(targetId, sessions) {
   const chart = document.getElementById(targetId);
   if (!chart) return;
@@ -677,16 +796,19 @@ function updateProfile() {
 }
 
 function updateThemeButton() {
-  const isDark = document.documentElement.dataset.theme === "dark";
-  const label = isDark ? "Switch to light theme" : "Switch to dark theme";
+  const theme = document.documentElement.dataset.theme || "light";
+  const labels = { light: "Light theme · click for dark", dark: "Dark theme · click for calm", calm: "Calm theme · click for light" };
+  const label = labels[theme] || labels.light;
   const button = document.getElementById("theme-button");
   button.setAttribute("aria-label", label);
   button.title = label;
-  document.querySelector('meta[name="theme-color"]').content = isDark ? "#171b1a" : "#f3f5f4";
+  document.querySelector('meta[name="theme-color"]').content = theme === "dark" ? "#171b1a" : theme === "calm" ? "#f2eadc" : "#f3f5f4";
 }
 
 function toggleTheme() {
-  const theme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+  const themes = ["light", "dark", "calm"];
+  const current = document.documentElement.dataset.theme || "light";
+  const theme = themes[(themes.indexOf(current) + 1) % themes.length];
   document.documentElement.dataset.theme = theme;
   updateThemeButton();
   try {
@@ -799,10 +921,16 @@ function setTimerDisplay() {
   document.querySelector(".live-pill").innerHTML = `<i></i> ${state.timerRunning ? "IN FOCUS" : state.timerBreak ? "ON BREAK" : "READY"}`;
 }
 
-function pauseTimer() {
-  state.timerRunning = false;
+function stopTimerInterval() {
   window.clearInterval(state.timerInterval);
   state.timerInterval = null;
+}
+
+function pauseTimer() {
+  state.timerRunning = false;
+  state.timerEndsAt = null;
+  stopTimerInterval();
+  saveTimerState();
   setTimerDisplay();
 }
 
@@ -812,31 +940,23 @@ function startTimer() {
     return;
   }
   state.timerRunning = true;
+  state.timerEndsAt = Date.now() + state.secondsLeft * 1000;
+  state.timerPhaseId = typeof crypto.randomUUID === "function" ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  saveTimerState();
   setTimerDisplay();
-  state.timerInterval = window.setInterval(() => {
-    state.secondsLeft -= 1;
-    setTimerDisplay();
-    if (state.secondsLeft <= 0) {
-      pauseTimer();
-      showToast(state.timerBreak ? "Break's over. Ready for another focus session?" : "Focus session complete. Take a well-earned 5-minute break!");
-      if (!state.timerBreak) {
-        state.sessions.push({ date: localDate(), minutes: state.timerDuration / 60 });
-        persistSessions();
-        renderAll();
-      }
-      state.timerBreak = !state.timerBreak;
-      state.timerDuration = state.timerBreak ? 5 * 60 : 25 * 60;
-      state.secondsLeft = state.timerDuration;
-      setTimerDisplay();
-    }
-  }, 1000);
+  stopTimerInterval();
+  state.timerInterval = window.setInterval(updateTimer, 1000);
 }
 
 function resetTimer() {
-  pauseTimer();
+  state.timerRunning = false;
+  state.timerEndsAt = null;
+  state.timerPhaseId = "";
+  stopTimerInterval();
   state.timerBreak = false;
   state.timerDuration = 25 * 60;
   state.secondsLeft = state.timerDuration;
+  saveTimerState();
   setTimerDisplay();
 }
 
@@ -931,7 +1051,14 @@ document.getElementById("reality-check-focus").addEventListener("click", () => {
 checkDailyReminder();
 window.setInterval(checkDailyReminder, 15000);
 document.addEventListener("visibilitychange", () => {
-  if (!document.hidden) checkDailyReminder();
+  if (!document.hidden) {
+    checkDailyReminder();
+    syncTimerFromStorage();
+  }
+});
+window.addEventListener("focus", syncTimerFromStorage);
+window.addEventListener("storage", (event) => {
+  if (event.key === TIMER_KEY) syncTimerFromStorage();
 });
 
 document.addEventListener("click", (event) => {
