@@ -9,6 +9,7 @@ const PROFILE_KEY = "prepwise.student-profile.v1";
 const ACCOUNT_KEY = "prepwise.profile.v1";
 const THEME_KEY = "prepwise.theme.v1";
 const TIMER_KEY = "prepwise.timer.v1";
+const FOCUS_DURATION_KEY = "prepwise.focus-duration.v1";
 const COLLEGE_EVENTS = [
   ["2026-08-31", "2026-08-31", "Classes begin", "Semester V classes commence."],
   ["2026-09-01", "2026-09-03", "Department registration", "Submit the signed registration form to the department."],
@@ -267,6 +268,16 @@ function readSavedTimer() {
   }
 }
 
+function readFocusDuration() {
+  try {
+    const minutes = Number(localStorage.getItem(FOCUS_DURATION_KEY));
+    return Number.isInteger(minutes) && minutes >= 1 && minutes <= 180 ? minutes : 25;
+  } catch (error) {
+    console.error("Could not load your focus duration:", error);
+    return 25;
+  }
+}
+
 const savedTimer = readSavedTimer();
 
 const state = {
@@ -285,6 +296,7 @@ const state = {
   timerDuration: savedTimer.duration,
   timerRunning: savedTimer.running,
   timerBreak: savedTimer.isBreak,
+  focusMinutes: readFocusDuration(),
   timerEndsAt: savedTimer.endsAt,
   timerPhaseId: savedTimer.phaseId,
   timerInterval: null
@@ -680,7 +692,7 @@ function finishTimerPhase() {
   }
 
   state.timerBreak = !completedBreak;
-  state.timerDuration = state.timerBreak ? 5 * 60 : 25 * 60;
+  state.timerDuration = state.timerBreak ? 5 * 60 : state.focusMinutes * 60;
   state.secondsLeft = state.timerDuration;
   state.timerPhaseId = "";
   saveTimerState();
@@ -905,6 +917,21 @@ function changeView(view) {
   if (view === "college-calendar") renderCollegeCalendar();
 }
 
+function openFocusTimer(startFocus = false) {
+  changeView("overview");
+  if (startFocus && !state.timerRunning) {
+    if (state.timerBreak) {
+      state.timerBreak = false;
+      state.timerDuration = state.focusMinutes * 60;
+      state.secondsLeft = state.timerDuration;
+      state.timerPhaseId = "";
+      saveTimerState();
+    }
+    startTimer();
+  }
+  requestAnimationFrame(() => document.getElementById("focus-card").scrollIntoView({ behavior: "smooth", block: "center" }));
+}
+
 function openTaskDialog(subject = "", title = "") {
   const options = document.getElementById("subject-options");
   options.innerHTML = state.subjects.map((item) => `<option value="${escapeHtml(item.name)}"></option>`).join("");
@@ -988,9 +1015,45 @@ function setTimerDisplay() {
   document.getElementById("timer-display").innerHTML = `${minutes}<span>:${seconds}</span>`;
   document.getElementById("timer-progress-bar").style.width = `${((state.timerDuration - state.secondsLeft) / state.timerDuration) * 100}%`;
   const button = document.getElementById("timer-start");
-  button.innerHTML = state.timerRunning ? "Pause session <span>Ⅱ</span>" : state.secondsLeft === state.timerDuration ? "Start focusing <span>→</span>" : "Resume session <span>→</span>";
+  button.textContent = state.timerRunning ? "Pause session" : state.secondsLeft === state.timerDuration ? "Start focusing" : "Resume session";
   document.getElementById("timer-mode").textContent = state.timerBreak ? "Take a breath. You earned this break." : state.timerRunning ? "One thing at a time. You’re doing great." : "A little focus goes a long way";
   document.querySelector(".live-pill").innerHTML = `<i></i> ${state.timerRunning ? "IN FOCUS" : state.timerBreak ? "ON BREAK" : "READY"}`;
+  document.getElementById("timer-eyebrow").textContent = `${state.focusMinutes} MINUTE TIMER`;
+  document.getElementById("timer-note").textContent = `${state.focusMinutes} min focus · 5 min break`;
+  const focusButton = document.getElementById("reality-check-focus");
+  focusButton.textContent = state.timerRunning ? (state.timerBreak ? "Break in progress" : "Focus session in progress") : `Start a ${state.focusMinutes}-min session`;
+  const durationSelect = document.getElementById("focus-duration");
+  const durationOptions = [15, 25, 30, 45, 60];
+  durationSelect.value = durationOptions.includes(state.focusMinutes) ? String(state.focusMinutes) : "custom";
+  const isCustom = durationSelect.value === "custom";
+  document.getElementById("custom-duration-wrap").hidden = !isCustom;
+  const customInput = document.getElementById("custom-focus-minutes");
+  customInput.hidden = !isCustom;
+  customInput.value = String(state.focusMinutes);
+  durationSelect.disabled = state.timerRunning;
+  customInput.disabled = state.timerRunning;
+}
+
+function setFocusDuration(value) {
+  const minutes = Number(value);
+  if (!Number.isInteger(minutes) || minutes < 1 || minutes > 180) {
+    showToast("Choose a focus time from 1 to 180 minutes.");
+    return;
+  }
+  state.focusMinutes = minutes;
+  if (!state.timerRunning && !state.timerBreak) {
+    state.timerDuration = minutes * 60;
+    state.secondsLeft = state.timerDuration;
+    state.timerPhaseId = "";
+    saveTimerState();
+  }
+  try {
+    localStorage.setItem(FOCUS_DURATION_KEY, String(minutes));
+  } catch (error) {
+    console.error("Could not save your focus duration:", error);
+    showToast("Your focus time could not be saved in this browser.");
+  }
+  setTimerDisplay();
 }
 
 function stopTimerInterval() {
@@ -1026,7 +1089,7 @@ function resetTimer() {
   state.timerPhaseId = "";
   stopTimerInterval();
   state.timerBreak = false;
-  state.timerDuration = 25 * 60;
+  state.timerDuration = state.focusMinutes * 60;
   state.secondsLeft = state.timerDuration;
   saveTimerState();
   setTimerDisplay();
@@ -1116,10 +1179,19 @@ document.getElementById("profile-reminder-enabled").addEventListener("change", a
 
 document.getElementById("reminder-button").addEventListener("click", openProfileDialog);
 document.getElementById("theme-button").addEventListener("click", cycleTheme);
-document.getElementById("reality-check-focus").addEventListener("click", () => {
-  changeView("overview");
-  if (!state.timerRunning) startTimer();
+document.getElementById("reality-check-focus").addEventListener("click", () => openFocusTimer(true));
+document.getElementById("focus-duration").addEventListener("change", (event) => {
+  if (event.currentTarget.value === "custom") {
+    document.getElementById("custom-duration-wrap").hidden = false;
+    document.getElementById("custom-focus-minutes").hidden = false;
+    document.getElementById("custom-focus-minutes").focus();
+    return;
+  }
+  document.getElementById("custom-duration-wrap").hidden = true;
+  document.getElementById("custom-focus-minutes").hidden = true;
+  setFocusDuration(event.currentTarget.value);
 });
+document.getElementById("custom-focus-minutes").addEventListener("change", (event) => setFocusDuration(event.currentTarget.value));
 checkDailyReminder();
 window.setInterval(checkDailyReminder, 15000);
 document.addEventListener("visibilitychange", () => {
@@ -1142,8 +1214,7 @@ document.addEventListener("click", (event) => {
   if (navigate) changeView(navigate.dataset.navigate);
   if (target.closest("#menu-button")) document.getElementById("sidebar").classList.toggle("open");
   if (target.closest("#top-focus-button")) {
-    changeView("overview");
-    if (!state.timerRunning) startTimer();
+    openFocusTimer(true);
   }
   if (target.closest("#add-task-button") || target.closest("[data-add-task]")) openTaskDialog();
   if (target.closest("[data-add-subject]")) openSubjectDialog();

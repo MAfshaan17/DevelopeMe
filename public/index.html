@@ -128,13 +128,21 @@
                 <div class="card-heading"><div><div class="section-eyebrow">YOUR DAY, AT A GLANCE</div><h2>Today's study plan</h2></div><button class="text-button" type="button" data-navigate="plan">See full plan <span>→</span></button></div>
                 <div class="schedule-list" id="today-schedule"></div>
               </section>
-              <section class="content-card focus-card">
-                <div class="card-heading"><div><div class="section-eyebrow">25 MINUTE TIMER</div><h2>Focus session</h2></div><span class="live-pill"><i></i> READY</span></div>
+              <section class="content-card focus-card" id="focus-card">
+                <div class="card-heading"><div><div class="section-eyebrow" id="timer-eyebrow">25 MINUTE TIMER</div><h2>Focus session</h2></div><span class="live-pill"><i></i> READY</span></div>
                 <div class="timer-display" id="timer-display">25<span>:00</span></div>
                 <div class="timer-mode" id="timer-mode">A little focus goes a long way</div>
+                <div class="timer-settings">
+                  <label for="focus-duration">Focus length</label>
+                  <select class="text-input" id="focus-duration" aria-label="Focus session length">
+                    <option value="15">15 minutes</option><option value="25">25 minutes</option><option value="30">30 minutes</option><option value="45">45 minutes</option><option value="60">60 minutes</option><option value="custom">Custom</option>
+                  </select>
+                  <label class="custom-duration" id="custom-duration-wrap" for="custom-focus-minutes" hidden>Custom minutes</label>
+                  <input class="text-input custom-duration-input" id="custom-focus-minutes" type="number" min="1" max="180" step="1" value="25" aria-label="Custom focus length in minutes" hidden>
+                </div>
                 <div class="timer-progress"><span id="timer-progress-bar"></span></div>
                 <div class="timer-controls"><button class="button button-primary timer-start" id="timer-start" type="button">Start focusing <span>→</span></button><button class="icon-button timer-reset" id="timer-reset" type="button" aria-label="Reset timer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 2.64-6.36L3 8m0-5v5h5"/></svg></button></div>
-                <p class="timer-note">25 min focus · 5 min break</p>
+                <p class="timer-note" id="timer-note">Focus time · 5 min break</p>
               </section>
             </div>
 
