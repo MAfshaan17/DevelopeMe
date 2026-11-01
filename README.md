@@ -1,4 +1,4 @@
-# DevelopeMebro
+# DevelopeME
 
 A personal study planner for **MYSELF**, a **5th-semester B.E. Computer Science and Business Systems student at JSS Science and Technology University, Mysuru**.
 
@@ -19,13 +19,13 @@ This project is meant to support my own college routine, semester goals, and int
 
 Study profile, subjects, tasks, and completed focus sessions are saved in this browser's local storage. They are not currently synced between browsers or devices. Account registration is available through the existing API, but the study planner itself does not yet sync its data to that account.
 
-The Drive links open the shared Google Drive folders and files in a new tab; DevelopeMebro does not import, copy, or automatically sync their contents. A live, signed-in Drive integration would need Google OAuth credentials and explicit folder access; the app does not collect Google passwords or scrape private Drive links.
+The Drive links open the shared Google Drive folders and files in a new tab; DevelopeME does not import, copy, or automatically sync their contents. A live, signed-in Drive integration would need Google OAuth credentials and explicit folder access; the app does not collect Google passwords or scrape private Drive links.
 
 ## Run locally
 
 1. Install dependencies with `npm install`.
 2. Set `PORT`, `MONGO_URL`, and `JWT_SECRET` in `.env` if you want to use account registration and sign-in.
-3. Start DevelopeMebro with `npm run dev`.
+3. Start DevelopeME with `npm run dev`.
 4. Open [http://localhost:3000](http://localhost:3000).
 
 ## Existing API

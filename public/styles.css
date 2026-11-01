@@ -1,4 +1,21 @@
 :root {
+  color-scheme: light;
+  --ink: #202b28;
+  --muted: #697671;
+  --line: #dce3df;
+  --paper: #fff;
+  --canvas: #f3f5f4;
+  --purple: #39745e;
+  --purple-dark: #285d49;
+  --purple-pale: #e8f0eb;
+  --green: #39815f;
+  --navy: #25342e;
+  font-family: "Segoe UI", Arial, sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+:root[data-theme="dark"] {
   color-scheme: dark;
   --ink: #e4e9e5;
   --muted: #a1ada5;
@@ -10,23 +27,20 @@
   --purple-pale: #202e26;
   --green: #83c39a;
   --navy: #dce9df;
-  font-family: "Segoe UI", Arial, sans-serif;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
 }
 
-:root[data-theme="dark"] {
-  color-scheme: dark;
-  --ink: #e7ece9;
-  --muted: #a0ada6;
-  --line: #29332d;
-  --paper: #151a18;
-  --canvas: #0b0f0d;
-  --purple: #82b99a;
-  --purple-dark: #a1d0b4;
-  --purple-pale: #202e26;
-  --green: #83c39a;
-  --navy: #dce9df;
+:root[data-theme="light"] {
+  color-scheme: light;
+  --ink: #25263b;
+  --muted: #77788d;
+  --line: #e5e4ee;
+  --paper: #fff;
+  --canvas: #f7f7fb;
+  --purple: #7066d9;
+  --purple-dark: #5f55c5;
+  --purple-pale: #f0efff;
+  --green: #68b991;
+  --navy: #25263b;
 }
 
 * { box-sizing: border-box; }
@@ -78,6 +92,9 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .icon-button { position: relative; display: inline-grid; width: 34px; height: 34px; flex: 0 0 auto; place-items: center; border: 1px solid #edecf3; border-radius: 9px; background: white; color: #73748b; }
 .icon-button:hover { border-color: #d8d4ff; color: var(--purple-dark); }
 .icon-button svg { width: 16px; height: 16px; }
+.theme-button .theme-icon-dark, :root:not([data-theme="dark"]) .theme-button .theme-icon-dark { display: none; }
+:root[data-theme="dark"] .theme-button .theme-icon-light { display: none; }
+:root[data-theme="dark"] .theme-button .theme-icon-dark { display: block; }
 .notification-dot { position: absolute; top: 7px; right: 7px; width: 5px; height: 5px; border: 1px solid white; border-radius: 50%; background: #ed8e73; }
 .button { display: inline-flex; min-height: 36px; align-items: center; justify-content: center; gap: 8px; padding: 0 15px; border: 1px solid transparent; border-radius: 8px; font-size: 11px; font-weight: 600; transition: transform .18s, background .18s, box-shadow .18s; }
 .button:hover { transform: translateY(-1px); }

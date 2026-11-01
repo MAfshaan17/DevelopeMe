@@ -7,6 +7,7 @@ const CURRICULUM_IMPORT_KEY = "prepwise.curriculum-import.v1";
 const SESSIONS_KEY = "prepwise.sessions.v1";
 const PROFILE_KEY = "prepwise.student-profile.v1";
 const ACCOUNT_KEY = "prepwise.profile.v1";
+const THEME_KEY = "prepwise.theme.v1";
 const TIMER_KEY = "prepwise.timer.v1";
 const COLLEGE_EVENTS = [
   ["2026-08-31", "2026-08-31", "Classes begin", "Semester V classes commence."],
@@ -690,7 +691,7 @@ function finishTimerPhase() {
     : "Focus session complete. Take a well-earned 5-minute break!";
   showToast(message);
   if (document.hidden && "Notification" in window && Notification.permission === "granted") {
-    new Notification("DevelopeMebro focus timer", { body: message, tag: `prepwise-focus-${completedPhaseId || Date.now()}` });
+    new Notification("DevelopeME focus timer", { body: message, tag: `prepwise-focus-${completedPhaseId || Date.now()}` });
   }
 }
 
@@ -861,6 +862,34 @@ function updateProfile() {
     : `${greeting}, ${username.split(/\s+/)[0]}.`;
 }
 
+function updateThemeButton() {
+  const theme = document.documentElement.dataset.theme || "default";
+  const labels = {
+    default: "Default theme (recommended) · click for Light",
+    light: "Light theme · click for Dark",
+    dark: "Dark theme · click for Default"
+  };
+  const button = document.getElementById("theme-button");
+  const label = labels[theme] || labels.default;
+  button.setAttribute("aria-label", label);
+  button.title = label;
+  document.querySelector('meta[name="theme-color"]').content = theme === "dark" ? "#0b0f0d" : theme === "light" ? "#f7f7fb" : "#f3f5f4";
+}
+
+function cycleTheme() {
+  const themes = ["default", "light", "dark"];
+  const current = document.documentElement.dataset.theme || "default";
+  const theme = themes[(themes.indexOf(current) + 1) % themes.length];
+  document.documentElement.dataset.theme = theme;
+  updateThemeButton();
+  try {
+    localStorage.setItem(THEME_KEY, theme);
+  } catch (error) {
+    console.error("Could not save the selected theme:", error);
+    showToast("Your theme preference couldn't be saved in this browser.");
+  }
+}
+
 function changeView(view) {
   if (!document.getElementById(`view-${view}`)) return;
   state.currentView = view;
@@ -869,7 +898,7 @@ function changeView(view) {
   const nav = document.querySelector(`[data-view="${view}"] span`);
   const heading = document.getElementById("breadcrumb-current");
   heading.textContent = nav?.textContent?.trim() || "Overview";
-  document.title = `${heading.textContent} - DevelopeMebro`;
+  document.title = `${heading.textContent} - DevelopeME`;
   document.getElementById("sidebar").classList.remove("open");
   if (view === "plan") renderPlan();
   if (view === "curriculum") renderCurriculum();
@@ -1086,6 +1115,7 @@ document.getElementById("profile-reminder-enabled").addEventListener("change", a
 });
 
 document.getElementById("reminder-button").addEventListener("click", openProfileDialog);
+document.getElementById("theme-button").addEventListener("click", cycleTheme);
 document.getElementById("reality-check-focus").addEventListener("click", () => {
   changeView("overview");
   if (!state.timerRunning) startTimer();
@@ -1278,6 +1308,7 @@ document.getElementById("timer-start").addEventListener("click", startTimer);
 document.getElementById("timer-reset").addEventListener("click", resetTimer);
 
 setDateLabel();
+updateThemeButton();
 importCurrentSemesterSubjects();
 renderAll();
 setTimerDisplay();
