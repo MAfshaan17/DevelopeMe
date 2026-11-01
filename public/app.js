@@ -73,7 +73,7 @@ const DAILY_REALITY_CHECKS = [
   "Confidence comes from repetitions. Put in a few fundamentals today so interviews feel less unfamiliar later.",
   "Engineering is also how you work with people. Keep your word, communicate clearly, and help someone—then put in one focused study session."
 ];
-const My Status = [
+const MY_STATUS = [
   {
     semester: 1,
     sourcePage: 35,
