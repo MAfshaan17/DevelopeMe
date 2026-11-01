@@ -674,3 +674,187 @@ h1 { margin-top: 8px; color: #25263b; font-size: clamp(24px, 3vw, 29px); font-we
   .chart-value, .chart-label { font-size: 7px; }
   .footer-note { font-size: 7px; }
 }
+
+/* ==========================================
+   STUDY SPACE — SAFE THEME PATCH
+   Preserves all existing architecture/layout
+========================================== */
+
+/* DEFAULT THEME */
+:root {
+  --ink: #25243a;
+  --muted: #77778e;
+  --line: #e8e7ef;
+  --paper: #ffffff;
+  --canvas: #f7f7fb;
+
+  --purple: #7568df;
+  --purple-dark: #6054c7;
+  --purple-pale: #f0efff;
+
+  --green: #55a985;
+  --navy: #29283e;
+}
+
+/* LIGHT THEME */
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  --ink: #25243a;
+  --muted: #77778e;
+  --line: #e8e7ef;
+  --paper: #ffffff;
+  --canvas: #f7f7fb;
+
+  --purple: #7568df;
+  --purple-dark: #6054c7;
+  --purple-pale: #f0efff;
+
+  --green: #55a985;
+  --navy: #29283e;
+}
+
+/* DARK THEME */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --ink: #ecebf5;
+  --muted: #a09fb3;
+  --line: #30303d;
+  --paper: #191922;
+  --canvas: #111118;
+
+  --purple: #a99eff;
+  --purple-dark: #c0b7ff;
+  --purple-pale: #2c2943;
+
+  --green: #7bc8a3;
+  --navy: #ecebf5;
+}
+
+/* GLOBAL COLORS — NO LAYOUT CHANGES */
+
+body {
+  background: var(--canvas);
+  color: var(--ink);
+  transition: background-color .2s ease, color .2s ease;
+}
+
+.sidebar,
+.topbar {
+  background: var(--paper);
+  border-color: var(--line);
+}
+
+.main-area {
+  background: var(--canvas);
+}
+
+.brand,
+h1,
+h2,
+.card-heading h2,
+.subject-item h3,
+.curriculum-course h3 {
+  color: var(--ink);
+}
+
+.nav-link {
+  color: var(--muted);
+}
+
+.nav-link.active {
+  background: var(--purple-pale);
+  color: var(--purple-dark);
+}
+
+.stat-card,
+.content-card,
+.subject-item,
+.curriculum-course,
+.practice-card,
+.plan-summary-card,
+.app-dialog {
+  background: var(--paper);
+  border-color: var(--line);
+}
+
+.streak-card {
+  background: var(--canvas);
+  border-color: var(--line);
+}
+
+.button-primary {
+  background: var(--purple);
+}
+
+.button-primary:hover {
+  background: var(--purple-dark);
+}
+
+.text-button,
+.hero-link,
+.inline-link {
+  color: var(--purple-dark);
+}
+
+/* DARK MODE COMPONENT COLORS */
+
+:root[data-theme="dark"] .schedule-item,
+:root[data-theme="dark"] .plan-task,
+:root[data-theme="dark"] .college-event {
+  border-color: var(--line);
+}
+
+:root[data-theme="dark"] .icon-button,
+:root[data-theme="dark"] .text-input,
+:root[data-theme="dark"] .schedule-check,
+:root[data-theme="dark"] .task-toggle {
+  background: var(--paper);
+  color: var(--ink);
+  border-color: var(--line);
+}
+
+:root[data-theme="dark"] .hero-card {
+  background: var(--paper);
+  border-color: var(--line);
+  border-left-color: var(--purple);
+}
+
+:root[data-theme="dark"] .reality-check-card {
+  background: #202e27;
+  border-color: #354b3d;
+}
+
+:root[data-theme="dark"] .reality-check-copy h2,
+:root[data-theme="dark"] .reality-check-copy > p {
+  color: var(--ink);
+}
+
+:root[data-theme="dark"] .empty-state {
+  background: var(--paper);
+  border-color: var(--line);
+}
+
+:root[data-theme="dark"] .empty-state h3 {
+  color: var(--ink);
+}
+
+/* SUBTLE INTERACTION POLISH */
+
+.button,
+.icon-button,
+.nav-link,
+.subject-item,
+.stat-card {
+  transition: background-color .2s ease,
+              color .2s ease,
+              border-color .2s ease;
+}
+
+/* ACCESSIBILITY */
+
+:focus-visible {
+  outline: 2px solid var(--purple);
+  outline-offset: 3px;
+}
