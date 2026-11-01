@@ -44,6 +44,9 @@
           <button class="nav-link" type="button" data-view="practice">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 3.5 7.5 12 12l8.5-4.5L12 3Z"/><path d="m5 11 7 3.7 7-3.7M5 15l7 3.7 7-3.7"/></svg><span>Practice tests</span><span class="nav-dot"></span>
           </button>
+          <button class="nav-link" type="button" data-view="college-calendar">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18m-13 4h3m-3 3h7"/></svg><span>College calendar</span>
+          </button>
           <button class="nav-link" type="button" data-view="progress">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5m0 14h17"/><path d="m7 15 4-4 3 2 6-7"/></svg><span>Progress</span>
           </button>
@@ -105,6 +108,11 @@
                 <button class="button button-primary" id="reality-check-focus" type="button">Start a 25-min session <span>→</span></button>
                 <button class="text-button" type="button" data-add-task>Plan one task</button>
               </div>
+            </section>
+
+            <section class="content-card college-next-card" aria-labelledby="college-next-title">
+              <div class="card-heading"><div><div class="section-eyebrow">5TH SEMESTER · COLLEGE</div><h2 id="college-next-title">Coming up</h2></div><button class="text-button" type="button" data-navigate="college-calendar">Full calendar <span>→</span></button></div>
+              <div id="college-next-event" class="college-next-event"></div>
             </section>
 
             <section class="content-card focus-areas-card"><div class="card-heading"><div><div class="section-eyebrow">MY FOCUS</div><h2>What I'm learning</h2></div><button class="text-button" type="button" data-open-profile>Edit profile <span>→</span></button></div><div class="focus-area-list" id="focus-areas"></div></section>
@@ -207,6 +215,12 @@
             <div class="page-heading"><div><div class="eyebrow"><span class="eyebrow-dot"></span> PRACTICE MAKES PROGRESS</div><h1 id="practice-title">Practice tests</h1><p class="welcome-subtitle">Build confidence one question at a time.</p></div></div>
             <div class="practice-banner"><div class="practice-banner-icon">✳</div><div><strong>Practice your own courses.</strong><p>Add your subjects first, then plan a practice session for the material you’re studying.</p></div></div>
             <div class="practice-grid" id="practice-subjects"></div>
+          </section>
+
+          <section class="view-panel" id="view-college-calendar" aria-labelledby="college-calendar-title">
+            <div class="page-heading"><div><div class="eyebrow"><span class="eyebrow-dot"></span> JSS STU · SEMESTER V · 2026–27</div><h1 id="college-calendar-title">College calendar</h1><p class="welcome-subtitle">Important dates for your semester, in order.</p></div></div>
+            <div class="calendar-note">University calendar is tentative and may change. Check department / CoE notices for final exam details.</div>
+            <section class="content-card college-calendar-card"><div id="college-event-list" class="college-event-list"></div></section>
           </section>
 
           <section class="view-panel" id="view-progress" aria-labelledby="progress-title">

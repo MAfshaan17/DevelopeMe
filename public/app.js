@@ -9,6 +9,37 @@ const PROFILE_KEY = "prepwise.student-profile.v1";
 const ACCOUNT_KEY = "prepwise.profile.v1";
 const THEME_KEY = "prepwise.theme.v1";
 const TIMER_KEY = "prepwise.timer.v1";
+const COLLEGE_EVENTS = [
+  ["2026-08-31", "2026-08-31", "Classes begin", "Semester V classes commence."],
+  ["2026-09-01", "2026-09-03", "Department registration", "Submit the signed registration form to the department."],
+  ["2026-09-14", "2026-09-14", "University holiday", "Varasiddhi Vinayaka Vratha."],
+  ["2026-10-02", "2026-10-02", "University holiday", "Gandhi Jayanthi."],
+  ["2026-10-05", "2026-10-09", "Entrepreneurship and professional body activities", "Department / SJCE STEP activities."],
+  ["2026-10-10", "2026-10-10", "University holiday", "Mahalaya Amavasya."],
+  ["2026-10-14", "2026-10-14", "First block attendance notice", "Attendance for Aug 31–Oct 14 is announced. Below 60% in a course means you cannot sit its first test."],
+  ["2026-10-15", "2026-10-17", "Test 1 · CIE Event I", "OE 1 is listed for Day 2, 2:30–3:45 pm."],
+  ["2026-10-20", "2026-10-20", "University holiday", "Mahanavami / Ayudha Pooja."],
+  ["2026-10-21", "2026-10-21", "University holiday", "Vijaya Dashami."],
+  ["2026-10-24", "2026-10-24", "Test 1 marks announced", "Event I evaluation marks posted on the department notice board."],
+  ["2026-10-26", "2026-10-28", "College admin and mentoring", "Test 1 marks entered in EMS; student mentoring and parent-teacher meetings."],
+  ["2026-11-10", "2026-11-10", "University holiday", "Bali Padyami."],
+  ["2026-11-27", "2026-11-27", "University holiday", "Kanakadasa Jayanthi."],
+  ["2026-12-05", "2026-12-05", "Second block attendance notice", "Attendance for Oct 15–Dec 5 is announced. Below 75% in a course means you cannot sit its second test; consolidated attendance is also announced."],
+  ["2026-12-07", "2026-12-09", "Test 2 · CIE Event III", "OE 1 is listed for Day 2, 2:30–3:45 pm."],
+  ["2026-12-14", "2026-12-14", "Test 2 marks and mentoring", "Event III evaluation marks announced; student mentoring meeting."],
+  ["2026-12-15", "2026-12-15", "Test 2 marks entered in EMS", "Event III evaluation marks entry."],
+  ["2026-12-16", "2026-12-18", "Lab CIE, make-up test and feedback", "Laboratory CIE test, make-up test, Event II marks finalization, and student feedback."],
+  ["2026-12-19", "2026-12-21", "College marks entry", "Event II, make-up test, and laboratory CIE marks entered in EMS."],
+  ["2026-12-23", "2026-12-23", "Last working day", "Last working day of the semester."],
+  ["2026-12-24", "2026-12-26", "Final CIE and attendance notice", "Final CIE and attendance announced; attendance entered in EMS."],
+  ["2026-12-25", "2026-12-25", "University holiday", "Christmas."],
+  ["2026-12-28", "2026-12-29", "CIE scrutiny", "Principal and HoDs review CIE and attendance; non-eligible student list announced."],
+  ["2026-12-31", "2027-01-01", "Department submissions", "Course / academic files submitted; CIE and attendance correction forms sent to the CoE office."],
+  ["2027-01-02", "2027-01-04", "Department review and records", "Mentoring records, CIE result analysis, action plan, OBE implementation, and NAAC/NBA review."],
+  ["2027-01-04", "2027-01-20", "SEE examinations", "Theory and laboratory SEE / repeater exams, evaluation, and result announcement as per CoE schedule."],
+  ["2027-01-15", "2027-01-15", "University holiday", "Makara Sankranthi."],
+  ["2027-02-02", "2027-02-02", "Next semester begins · tentative", "Commencement date is tentative in the university calendar."]
+].map(([start, end, title, detail]) => ({ start, end, title, detail }));
 const PROFILE_DEFAULTS = {
   name: "Mahammad Afshaan",
   college: "JSS Science and Technology University, Mysuru",
@@ -459,6 +490,7 @@ function renderOverview() {
   const focusMinutes = weeklySessions.reduce((total, session) => total + session.minutes, 0);
   const streak = activeDays();
   renderDailyRealityCheck();
+  renderCollegeCalendar();
   document.getElementById("weekly-hours").textContent = (focusMinutes / 60).toFixed(1);
   document.getElementById("tasks-completed").textContent = String(completed);
   document.getElementById("weekly-goal-label").textContent = weeklyGoal ? `${completed} / ${weeklyGoal}` : "Set a goal";
@@ -504,6 +536,40 @@ function renderOverview() {
     const date = localDate(day);
     const label = new Intl.DateTimeFormat(undefined, { weekday: "narrow" }).format(day);
     return `<span class="streak-day${active.has(date) ? " done" : ""}${date === localDate() ? " today" : ""}" aria-label="${escapeHtml(new Intl.DateTimeFormat(undefined, { weekday: "long", month: "short", day: "numeric" }).format(day))}${active.has(date) ? ": activity recorded" : ": no activity recorded"}">${escapeHtml(label)}</span>`;
+  }).join("");
+}
+
+function formatCollegeDate(value, options = { month: "short", day: "numeric" }) {
+  return new Intl.DateTimeFormat(undefined, options).format(new Date(`${value}T00:00:00`));
+}
+
+function collegeEventDateLabel(event) {
+  return event.start === event.end
+    ? formatCollegeDate(event.start, { month: "long", day: "numeric", year: "numeric" })
+    : `${formatCollegeDate(event.start)} – ${formatCollegeDate(event.end, { month: "short", day: "numeric", year: "numeric" })}`;
+}
+
+function renderCollegeCalendar() {
+  const today = localDate();
+  const upcoming = COLLEGE_EVENTS.filter((event) => event.end >= today);
+  const next = upcoming[0];
+  const nextCard = document.getElementById("college-next-event");
+  if (nextCard) {
+    if (next) {
+      const days = Math.round((Date.parse(`${next.start}T00:00:00Z`) - Date.parse(`${today}T00:00:00Z`)) / 86400000);
+      const status = days < 0 ? "Happening now" : days === 0 ? "Today" : days === 1 ? "Tomorrow" : `In ${days} days`;
+      nextCard.innerHTML = `<div class="college-next-date"><strong>${escapeHtml(status)}</strong><span>${escapeHtml(collegeEventDateLabel(next))}</span></div><div class="college-event-copy"><h3>${escapeHtml(next.title)}</h3><p>${escapeHtml(next.detail)}</p></div>`;
+    } else {
+      nextCard.innerHTML = '<div class="college-event-copy"><h3>Semester calendar complete</h3><p>The next semester is scheduled to begin February 2, 2027 (tentative).</p></div>';
+    }
+  }
+
+  const list = document.getElementById("college-event-list");
+  if (!list) return;
+  list.innerHTML = COLLEGE_EVENTS.map((event) => {
+    const past = event.end < today;
+    const current = event.start <= today && event.end >= today;
+    return `<article class="college-event${past ? " is-past" : ""}${current ? " is-current" : ""}"><time datetime="${event.start}">${escapeHtml(collegeEventDateLabel(event))}</time><div class="college-event-copy"><h3>${escapeHtml(event.title)}</h3><p>${escapeHtml(event.detail)}</p></div>${current ? '<span class="college-event-badge">Now</span>' : past ? '<span class="college-event-badge">Past</span>' : ""}</article>`;
   }).join("");
 }
 
@@ -716,6 +782,7 @@ function renderAll() {
   });
   renderCurriculum();
   renderPractice();
+  renderCollegeCalendar();
   renderProgress();
   updateProfile();
   renderFocusAreas();
@@ -831,6 +898,7 @@ function changeView(view) {
   document.getElementById("sidebar").classList.remove("open");
   if (view === "plan") renderPlan();
   if (view === "curriculum") renderCurriculum();
+  if (view === "college-calendar") renderCollegeCalendar();
 }
 
 function openTaskDialog(subject = "", title = "") {
