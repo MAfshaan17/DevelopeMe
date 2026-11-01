@@ -173,7 +173,7 @@
           <section class="view-panel" id="view-curriculum" aria-labelledby="curriculum-title">
             <div class="page-heading"><div><div class="eyebrow"><span class="eyebrow-dot"></span> JSS STU · B.E. CSBS</div><h1 id="curriculum-title">Your CSBS curriculum</h1><p class="welcome-subtitle">Official semester courses from your 2024-25 scheme. Add a course to your subjects when you want to plan or track it.</p></div></div>
             <section class="content-card curriculum-overview">
-              <div class="curriculum-status-note">Semester I–IV are shown as completed and Semester V as in progress, based on the timeline you shared. Individual course completion, marks, and progress are not prefilled.</div>
+              <div class="curriculum-status-note">Semesters I�IV are marked complete and Semester V is in progress. Your Sem III�IV result-sheet grades are imported below; enter this semester's assessment marks yourself.</div>
               <div class="semester-tabs" id="semester-tabs" role="group" aria-label="Select a CSBS semester">
                 <button class="semester-tab" type="button" aria-pressed="false" data-semester="1">Sem I</button>
                 <button class="semester-tab" type="button" aria-pressed="false" data-semester="2">Sem II</button>
@@ -185,6 +185,10 @@
             </section>
             <p class="curriculum-source" id="curriculum-source"></p>
             <div class="curriculum-courses" id="curriculum-courses"></div>
+            <section class="content-card marks-card" aria-labelledby="marks-card-title">
+              <div class="card-heading"><div><div class="section-eyebrow">YOUR RESULTS · YOUR NEXT STEP</div><h2 id="marks-card-title">My marks card</h2><p id="marks-card-subtitle" class="marks-card-subtitle"></p></div><button class="button button-primary marks-header-add" type="button" data-add-mark>Add marks <span>+</span></button></div>
+              <div id="marks-card-body" class="marks-card-body"></div>
+            </section>
             <section class="content-card drive-resources">
               <div class="card-heading"><div><div class="section-eyebrow">YOUR SHARED GOOGLE DRIVE</div><h2>5th semester notes & syllabus</h2></div><a class="text-button" href="https://drive.google.com/drive/folders/1O80jwGsfws0cjUpMDQ4FmzHJ3_PgMEnE" target="_blank" rel="noopener noreferrer">Open full folder ↗</a></div>
               <p class="drive-resource-note">These are links to files and folders shared with the link. They open in Google Drive; DevelopeME does not copy or sync their contents.</p>
@@ -260,6 +264,18 @@
         <label class="field-label" for="subject-detail">Course code, goal, or notes (optional)</label><input class="text-input" id="subject-detail" name="detail" maxlength="100" placeholder="e.g. 24CB520 · graphs · build a small RAG app">
         <label class="field-label" for="subject-progress-input">Your current progress <span id="subject-progress-value">0%</span></label><input class="range-input" id="subject-progress-input" name="progress" type="range" min="0" max="100" value="0">
         <div class="dialog-actions"><button class="button button-quiet" type="button" data-close-dialog>Cancel</button><button class="button button-primary" id="subject-submit-label" type="submit">Add subject <span>→</span></button></div>
+      </form>
+    </dialog>
+
+    <dialog class="app-dialog" id="marks-dialog">
+      <form class="dialog-content" id="marks-form">
+        <div class="dialog-top"><div><div class="section-eyebrow">SEMESTER <span id="marks-dialog-semester">V</span></div><h2>Add your marks</h2></div><button class="icon-button dialog-close" type="button" data-close-dialog aria-label="Close dialog">×</button></div>
+        <label class="field-label" for="marks-course">Course</label><select class="text-input" id="marks-course" name="course" required></select>
+        <label class="field-label" for="marks-assessment">Test or assessment</label><input class="text-input" id="marks-assessment" name="assessment" maxlength="60" placeholder="e.g. CIE Test 1, assignment, lab" required>
+        <div class="form-row"><div><label class="field-label" for="marks-score">Your score</label><input class="text-input" id="marks-score" name="score" type="number" min="0" step="0.5" placeholder="e.g. 18" required></div><div><label class="field-label" for="marks-out-of">Maximum marks</label><input class="text-input" id="marks-out-of" name="outOf" type="number" min="0.5" step="0.5" placeholder="e.g. 20" required></div></div>
+        <label class="field-label" for="marks-date">Date</label><input class="text-input" id="marks-date" name="date" type="date" required>
+        <p class="auth-error" id="marks-error" role="alert"></p>
+        <div class="dialog-actions"><button class="button button-quiet" type="button" data-close-dialog>Cancel</button><button class="button button-primary" type="submit">Save marks</button></div>
       </form>
     </dialog>
 

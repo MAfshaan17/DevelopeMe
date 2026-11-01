@@ -8,7 +8,7 @@ This project is meant to support my own college routine, semester goals, and int
 
 - Add the subjects I am actually taking and update each subject's progress.
 - Add your own **Self-learning** tracks (for example AI, DSA, backend, or projects) alongside College courses from **My subjects & tracks**. Filter the list by College or Self-learning and add tasks for either.
-- Check the **CSBS curriculum** view for the official Semester I–V courses from the 2024-25 JSS STU scheme (PDF pages 35–40). Semester I–IV are marked complete and Semester V in progress based on the timeline you shared; no marks or individual course progress are assumed. The five non-elective Semester V courses are added to **My subjects** once, with progress left untracked until you set it. Add other listed courses when you want to plan or track them.
+- Check **CSBS curriculum** for official Semester I through V courses. Your Semester III and IV grade results from the uploaded result sheet appear in the marks card; the PDF does not include raw marks. Semester V starts empty so you can enter each test score manually. The five non-elective Semester V courses are added to **My subjects** once, with progress left untracked until you set it.
 - The scheme gives practical/lab hours as **P** alongside course lecture/tutorial hours. It does not list stand-alone lab course titles for these semesters, so none are invented. The Semester V Professional Elective I choices are shown without assuming which one you selected; the Open Elective title remains yours to enter.
 - Plan your own study tasks by date, time, and duration.
 - Track focus sessions, completed tasks, and your active-day streak from activity you record.
@@ -17,7 +17,7 @@ This project is meant to support my own college routine, semester goals, and int
 - Keep your own GitHub, LinkedIn, and CSBS/AI/backend focus areas on your dashboard.
 - Open the **CSBS curriculum** view for links to your shared Semester V Google Drive folders. The ADA folder has direct links to `ADA Syllabus.pdf`, `Unit 1 Notes.pdf`, and its Question Papers folder; the other course folders are linked too.
 
-Study profile, subjects, tasks, and completed focus sessions are saved in this browser's local storage. They are not currently synced between browsers or devices. Account registration is available through the existing API, but the study planner itself does not yet sync its data to that account.
+Study profile, subjects, tasks, marks, and completed focus sessions are saved in this browser's local storage. They are not currently synced between browsers or devices. Account registration is available through the existing API, but the study planner itself does not yet sync its data to that account.
 
 The Drive links open the shared Google Drive folders and files in a new tab; DevelopeME does not import, copy, or automatically sync their contents. A live, signed-in Drive integration would need Google OAuth credentials and explicit folder access; the app does not collect Google passwords or scrape private Drive links.
 

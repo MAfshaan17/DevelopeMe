@@ -10,6 +10,7 @@ const ACCOUNT_KEY = "prepwise.profile.v1";
 const THEME_KEY = "prepwise.theme.v1";
 const TIMER_KEY = "prepwise.timer.v1";
 const FOCUS_DURATION_KEY = "prepwise.focus-duration.v1";
+const MARKS_KEY = "prepwise.marks.v1";
 const COLLEGE_EVENTS = [
   ["2026-08-31", "2026-08-31", "Classes begin", "Semester V classes commence."],
   ["2026-09-01", "2026-09-03", "Department registration", "Submit the signed registration form to the department."],
@@ -165,6 +166,36 @@ const CSBS_CURRICULUM = [
   }
 ];
 
+const TRANSCRIPT_RESULTS = {
+  3: {
+    sgpa: 6.62,
+    cgpa: 7.03,
+    courses: [
+      { code: "24CB310", name: "Formal Language & Automata Theory", credits: 4, points: 7, grade: "C" },
+      { code: "24HU311", name: "Universal Human Values - II", credits: 2, points: 8, grade: "B" },
+      { code: "24CB320", name: "Computer Organization & Architecture", credits: 4, points: 7, grade: "C" },
+      { code: "24CB330", name: "Object Oriented Programming", credits: 4, points: 5, grade: "D" },
+      { code: "24CB340", name: "Computational Statistics", credits: 4, points: 5, grade: "D" },
+      { code: "24CB350", name: "Software Engineering", credits: 4, points: 8, grade: "B" },
+      { code: "24CB360", name: "Financial & Cost Accounting", credits: 4, points: 7, grade: "C" }
+    ]
+  },
+  4: {
+    sgpa: 8.13,
+    cgpa: 7.32,
+    courses: [
+      { code: "24CB410", name: "Operating Systems", credits: 4, points: 7, grade: "C" },
+      { code: "24CB420", name: "Database Management Systems", credits: 4, points: 9, grade: "A" },
+      { code: "24CB430", name: "Software Design with UML", credits: 3, points: 7, grade: "C" },
+      { code: "24CB440", name: "Operations Research", credits: 4, points: 9, grade: "A" },
+      { code: "24CB450", name: "Innovation, IP Management & Entrepreneurship", credits: 2, points: 7, grade: "C" },
+      { code: "24CB460", name: "Marketing Research & Marketing Management", credits: 2, points: 8, grade: "B" },
+      { code: "24CB470", name: "Business Communication & Value Science - III", credits: 2, points: 10, grade: "S" },
+      { code: "24HU412", name: "Environmental Studies", credits: 2, points: 8, grade: "B" }
+    ]
+  }
+};
+
 function localDate(date = new Date()) {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -278,12 +309,26 @@ function readFocusDuration() {
   }
 }
 
+function isMarkEntry(entry) {
+  return entry
+    && typeof entry.id === "string"
+    && Number.isInteger(entry.semester)
+    && entry.semester >= 1 && entry.semester <= 5
+    && typeof entry.courseCode === "string"
+    && typeof entry.courseName === "string"
+    && typeof entry.assessment === "string"
+    && Number.isFinite(entry.score) && entry.score >= 0
+    && Number.isFinite(entry.outOf) && entry.outOf > 0 && entry.score <= entry.outOf
+    && typeof entry.date === "string";
+}
+
 const savedTimer = readSavedTimer();
 
 const state = {
   tasks: readTasks(),
   subjects: readCollection(SUBJECTS_KEY, (subject) => subject && typeof subject.id === "string" && typeof subject.name === "string" && typeof subject.progress === "number", "Saved subjects are not valid."),
   sessions: readCollection(SESSIONS_KEY, (session) => session && typeof session.date === "string" && typeof session.minutes === "number", "Saved focus sessions are not valid."),
+  marks: readCollection(MARKS_KEY, isMarkEntry, "Saved marks are not valid."),
   filter: "all",
   currentView: "overview",
   currentSemester: 5,
@@ -321,6 +366,10 @@ function persistSubjects() {
 
 function persistSessions() {
   persist(SESSIONS_KEY, state.sessions, "focus sessions");
+}
+
+function persistMarks() {
+  persist(MARKS_KEY, state.marks, "marks");
 }
 
 
@@ -466,6 +515,135 @@ function renderCurriculum() {
         ${!course.slot ? addAction : ""}
       </article>`;
   }).join("");
+  renderMarksCard(semester);
+}
+
+function availableMarkCourses(semester) {
+  const courses = semester.courses.flatMap((course) => {
+    if (!course.slot) return [{ code: course.code, name: course.name }];
+    if (course.options?.length) return course.options.map((option) => ({ code: option.code, name: option.name }));
+    return [{ code: course.code, name: course.name }];
+  });
+  return courses;
+}
+
+function renderTranscriptResult(semesterNumber) {
+  const result = TRANSCRIPT_RESULTS[semesterNumber];
+  if (!result) return "";
+  const creditTotal = result.courses.reduce((sum, course) => sum + course.credits, 0);
+  const pointsTotal = result.courses.reduce((sum, course) => sum + course.credits * course.points, 0);
+  const lowestPoints = Math.min(...result.courses.map((course) => course.points));
+  const priorities = result.courses.filter((course) => course.points === lowestPoints);
+  const strengths = result.courses.filter((course) => course.points >= 9);
+  const change = semesterNumber === 4 ? result.sgpa - TRANSCRIPT_RESULTS[3].sgpa : null;
+  return `
+    <div class="marks-summary-grid">
+      <div class="marks-stat"><span>Semester GPA</span><strong>${result.sgpa.toFixed(2)}</strong></div>
+      <div class="marks-stat"><span>Cumulative GPA then</span><strong>${result.cgpa.toFixed(2)}</strong></div>
+      <div class="marks-stat"><span>Credit points</span><strong>${pointsTotal} / ${creditTotal} credits</strong></div>
+      ${change === null ? "" : `<div class="marks-stat marks-trend"><span>Change from Sem III</span><strong>+${change.toFixed(2)} GPA points</strong></div>`}
+    </div>
+    <p class="marks-source-note">Imported from your result sheet. It shows grades and grade points, not raw marks, so no percentages are estimated.</p>
+    <div class="marks-table-wrap"><table class="marks-table">
+      <thead><tr><th>Course</th><th>Credits</th><th>Grade</th><th>Grade points</th><th>Credit points</th></tr></thead>
+      <tbody>${result.courses.map((course) => `
+        <tr class="${course.points === lowestPoints ? "marks-priority-row" : ""}">
+          <td><span class="marks-course-code">${escapeHtml(course.code)}</span><strong>${escapeHtml(course.name)}</strong></td>
+          <td>${course.credits}</td><td><span class="grade-pill grade-${course.grade.toLowerCase()}">${escapeHtml(course.grade)}</span></td><td>${course.points.toFixed(1)}</td><td>${(course.credits * course.points).toFixed(1)}</td>
+        </tr>`).join("")}</tbody>
+    </table></div>
+    <div class="marks-evaluation">
+      <div><span class="section-eyebrow">WHAT TO WORK ON</span><p>${semesterNumber === 3
+        ? `Your lowest grade points were in ${priorities.map((course) => escapeHtml(course.name)).join(" and ")}. Give these first priority in your revision.`
+        : `Your C grades are in ${result.courses.filter((course) => course.points === 7).map((course) => escapeHtml(course.name)).join(", ")}. These are the clearest next targets.`}</p></div>
+      <div><span class="section-eyebrow">WHAT'S GOING WELL</span><p>${strengths.length
+        ? `Strong results in ${strengths.map((course) => `${escapeHtml(course.name)} (${escapeHtml(course.grade)})`).join(" and ")}. Keep those habits going.`
+        : "Keep building steady revision habits across your courses."}</p></div>
+    </div>
+    <div class="marks-action-list">${(semesterNumber === 3 ? priorities : result.courses.filter((course) => course.points === 7)).map((course) => `
+      <div class="marks-action-row"><span><strong>${escapeHtml(course.name)}</strong><small>${escapeHtml(course.grade)} · ${course.points.toFixed(1)} grade points</small></span><button class="button button-quiet" type="button" data-plan-mark-course="${escapeHtml(course.name)}">Plan a study session</button></div>`).join("")}</div>`;
+}
+
+function renderManualMarks(semesterNumber) {
+  const entries = state.marks.filter((entry) => entry.semester === semesterNumber).sort((first, second) => second.date.localeCompare(first.date));
+  const sectionHeading = `<div class="marks-manual-heading"><div><h3>My assessment tracker</h3><p>Scores you enter manually. Add each test with its maximum marks.</p></div></div>`;
+  if (!entries.length) {
+    return `${sectionHeading}<div class="marks-empty"><p>No marks added for Semester ${semesterNumber} yet. Add a test or assessment score to see your progress and what to revise next.</p><button class="button button-primary" type="button" data-add-mark>Add marks manually <span>+</span></button></div>`;
+  }
+
+  const grouped = new Map();
+  entries.forEach((entry) => {
+    const group = grouped.get(entry.courseCode) || { name: entry.courseName, score: 0, outOf: 0 };
+    group.score += entry.score;
+    group.outOf += entry.outOf;
+    grouped.set(entry.courseCode, group);
+  });
+  const totals = [...grouped.values()].reduce((sum, group) => ({ score: sum.score + group.score, outOf: sum.outOf + group.outOf }), { score: 0, outOf: 0 });
+  const overall = totals.outOf ? totals.score / totals.outOf * 100 : 0;
+  const priorities = [...grouped.entries()].map(([code, group]) => ({ code, ...group, percent: group.score / group.outOf * 100 })).sort((a, b) => a.percent - b.percent);
+  return `${sectionHeading}
+    <div class="marks-summary-grid">
+      <div class="marks-stat"><span>Entered so far</span><strong>${entries.length} ${entries.length === 1 ? "assessment" : "assessments"}</strong></div>
+      <div class="marks-stat"><span>Combined score</span><strong>${totals.score} / ${totals.outOf}</strong></div>
+      <div class="marks-stat"><span>Current average</span><strong>${overall.toFixed(1)}%</strong></div>
+    </div>
+    <p class="marks-source-note">This is a running average of the marks you entered, not an official semester grade or GPA. Your result sheet lists minimums of 40% SEE, 50% CIE, and 45% aggregate; one test score alone cannot determine pass eligibility.</p>
+    <div class="manual-mark-courses">${priorities.map((group) => {
+      const sessions = group.percent < 50 ? 3 : group.percent < 70 ? 2 : 1;
+      const label = group.percent < 50 ? "Priority" : group.percent < 70 ? "Build this" : "On track";
+      return `<article class="manual-mark-course ${group.percent < 50 ? "needs-work" : group.percent < 70 ? "improve" : "strong"}"><div><span class="marks-course-code">${escapeHtml(group.code)}</span><h3>${escapeHtml(group.name)}</h3><p>${group.score} / ${group.outOf} · ${group.percent.toFixed(1)}% · ${label}</p></div><div class="manual-mark-action"><span>${sessions} × 25-min focus sessions</span><button class="text-button" type="button" data-plan-mark-course="${escapeHtml(group.name)}">Plan session →</button></div></article>`;
+    }).join("")}</div>
+    <div class="marks-table-wrap"><table class="marks-table manual-marks-table">
+      <thead><tr><th>Course</th><th>Assessment</th><th>Score</th><th>Date</th><th></th></tr></thead>
+      <tbody>${entries.map((entry) => `
+        <tr><td><span class="marks-course-code">${escapeHtml(entry.courseCode)}</span><strong>${escapeHtml(entry.courseName)}</strong></td><td>${escapeHtml(entry.assessment)}</td><td>${entry.score} / ${entry.outOf} <small>(${(entry.score / entry.outOf * 100).toFixed(1)}%)</small></td><td>${escapeHtml(entry.date)}</td><td><button class="mark-delete-button" type="button" data-delete-mark="${escapeHtml(entry.id)}" aria-label="Delete ${escapeHtml(entry.assessment)} mark">Remove</button></td></tr>`).join("")}</tbody>
+    </table></div>
+    <button class="button button-quiet marks-add-another" type="button" data-add-mark>Add another score <span>+</span></button>`;
+}
+
+function renderPreviousPerformanceSummary() {
+  const semester3 = TRANSCRIPT_RESULTS[3];
+  const semester4 = TRANSCRIPT_RESULTS[4];
+  const change = semester4.sgpa - semester3.sgpa;
+  return `<section class="marks-history-insight">
+    <div class="marks-summary-grid">
+      <div class="marks-stat"><span>Sem III SGPA</span><strong>${semester3.sgpa.toFixed(2)}</strong></div>
+      <div class="marks-stat"><span>Sem IV SGPA</span><strong>${semester4.sgpa.toFixed(2)}</strong></div>
+      <div class="marks-stat"><span>Current CGPA</span><strong>${semester4.cgpa.toFixed(2)}</strong></div>
+      <div class="marks-stat marks-trend"><span>SGPA improvement</span><strong>+${change.toFixed(2)} points</strong></div>
+    </div>
+    <div class="marks-evaluation">
+      <div><span class="section-eyebrow">PRIORITY FROM SEM III</span><p>Object Oriented Programming and Computational Statistics were your lowest results (D, 5 grade points). Start your improvement plan with these two.</p></div>
+      <div><span class="section-eyebrow">SEM IV STRENGTHS</span><p>You earned A grades in Database Management Systems and Operations Research, and an S in Business Communication and Value Science III.</p></div>
+    </div>
+    <div class="marks-action-list">
+      <div class="marks-action-row"><span><strong>Object Oriented Programming</strong><small>Sem III result: D · 5 grade points</small></span><button class="button button-quiet" type="button" data-plan-mark-course="Object Oriented Programming">Plan a study session</button></div>
+      <div class="marks-action-row"><span><strong>Computational Statistics</strong><small>Sem III result: D · 5 grade points</small></span><button class="button button-quiet" type="button" data-plan-mark-course="Computational Statistics">Plan a study session</button></div>
+    </div>
+  </section>`;
+}
+
+function renderMarksCard(semester) {
+  const result = TRANSCRIPT_RESULTS[semester.semester];
+  const title = document.getElementById("marks-card-title");
+  title.textContent = `Semester ${["I", "II", "III", "IV", "V"][semester.semester - 1]} marks card`;
+  document.getElementById("marks-card-subtitle").textContent = result
+    ? "Your result sheet plus a clear view of strengths and improvement areas."
+    : "Add your test and assessment scores as you receive them.";
+  const pastPerformance = semester.semester === 5 ? renderPreviousPerformanceSummary() : "";
+  document.getElementById("marks-card-body").innerHTML = `${result ? renderTranscriptResult(semester.semester) : pastPerformance}${renderManualMarks(semester.semester)}`;
+}
+
+function openMarksDialog() {
+  const semester = CSBS_CURRICULUM.find((item) => item.semester === state.currentSemester);
+  if (!semester) return;
+  const courses = availableMarkCourses(semester);
+  const select = document.getElementById("marks-course");
+  select.innerHTML = courses.map((course) => `<option value="${escapeHtml(course.code)}">${escapeHtml(course.code)} · ${escapeHtml(course.name)}</option>`).join("");
+  document.getElementById("marks-dialog-semester").textContent = ["I", "II", "III", "IV", "V"][semester.semester - 1];
+  document.getElementById("marks-date").value = localDate();
+  document.getElementById("marks-error").textContent = "";
+  document.getElementById("marks-dialog").showModal();
 }
 
 function importCurrentSemesterSubjects() {
@@ -1257,6 +1435,15 @@ document.addEventListener("click", (event) => {
   }
   const editSubject = target.closest("[data-edit-subject]");
   if (editSubject) openSubjectDialog(editSubject.dataset.editSubject);
+  if (target.closest("[data-add-mark]")) openMarksDialog();
+  const planMark = target.closest("[data-plan-mark-course]");
+  if (planMark) openTaskDialog(planMark.dataset.planMarkCourse, `Review ${planMark.dataset.planMarkCourse} and solve practice questions`);
+  const deleteMark = target.closest("[data-delete-mark]");
+  if (deleteMark && window.confirm("Remove this saved mark?")) {
+    state.marks = state.marks.filter((entry) => entry.id !== deleteMark.dataset.deleteMark);
+    persistMarks();
+    renderCurriculum();
+  }
   const removeSubject = target.closest("[data-delete-subject]");
   if (removeSubject) {
     const subject = state.subjects.find((item) => item.id === removeSubject.dataset.deleteSubject);
@@ -1287,6 +1474,37 @@ document.getElementById("task-form").addEventListener("submit", (event) => {
   document.getElementById("task-dialog").close();
   event.currentTarget.reset();
   showToast("Added to your study plan. You’ve got this!");
+});
+
+document.getElementById("marks-form").addEventListener("submit", (event) => {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const data = new FormData(form);
+  const courseCode = String(data.get("course") || "");
+  const course = availableMarkCourses(CSBS_CURRICULUM.find((item) => item.semester === state.currentSemester)).find((item) => item.code === courseCode);
+  const assessment = String(data.get("assessment") || "").trim();
+  const score = Number(data.get("score"));
+  const outOf = Number(data.get("outOf"));
+  const error = document.getElementById("marks-error");
+  if (!course || !assessment || !Number.isFinite(score) || !Number.isFinite(outOf) || score < 0 || outOf <= 0 || score > outOf) {
+    error.textContent = "Check the course and marks. Your score must be between zero and the maximum marks.";
+    return;
+  }
+  state.marks.push({
+    id: typeof crypto.randomUUID === "function" ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+    semester: state.currentSemester,
+    courseCode: course.code,
+    courseName: course.name,
+    assessment,
+    score,
+    outOf,
+    date: String(data.get("date") || localDate())
+  });
+  persistMarks();
+  renderCurriculum();
+  document.getElementById("marks-dialog").close();
+  form.reset();
+  showToast("Marks saved. Your improvement guide is updated.");
 });
 
 document.getElementById("subject-progress-input").addEventListener("input", (event) => {
