@@ -1,15 +1,15 @@
 :root {
-  color-scheme: light;
-  --ink: #202b28;
-  --muted: #697671;
-  --line: #dce3df;
-  --paper: #fff;
-  --canvas: #f3f5f4;
-  --purple: #39745e;
-  --purple-dark: #285d49;
-  --purple-pale: #e8f0eb;
-  --green: #39815f;
-  --navy: #25342e;
+  color-scheme: dark;
+  --ink: #e4e9e5;
+  --muted: #a1ada5;
+  --line: #29332d;
+  --paper: #151a18;
+  --canvas: #0b0f0d;
+  --purple: #82b99a;
+  --purple-dark: #a1d0b4;
+  --purple-pale: #202e26;
+  --green: #83c39a;
+  --navy: #dce9df;
   font-family: "Segoe UI", Arial, sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -19,28 +19,14 @@
   color-scheme: dark;
   --ink: #e7ece9;
   --muted: #a0ada6;
-  --line: #343e39;
-  --paper: #202723;
-  --canvas: #171c19;
+  --line: #29332d;
+  --paper: #151a18;
+  --canvas: #0b0f0d;
   --purple: #82b99a;
   --purple-dark: #a1d0b4;
-  --purple-pale: #293a31;
+  --purple-pale: #202e26;
   --green: #83c39a;
   --navy: #dce9df;
-}
-
-:root[data-theme="calm"] {
-  color-scheme: light;
-  --ink: #382f28;
-  --muted: #817362;
-  --line: #e4d8c8;
-  --paper: #fffaf1;
-  --canvas: #f2eadc;
-  --purple: #a36f42;
-  --purple-dark: #80522e;
-  --purple-pale: #f1e2cf;
-  --green: #8b7045;
-  --navy: #4d3c2d;
 }
 
 * { box-sizing: border-box; }
@@ -92,8 +78,6 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .icon-button { position: relative; display: inline-grid; width: 34px; height: 34px; flex: 0 0 auto; place-items: center; border: 1px solid #edecf3; border-radius: 9px; background: white; color: #73748b; }
 .icon-button:hover { border-color: #d8d4ff; color: var(--purple-dark); }
 .icon-button svg { width: 16px; height: 16px; }
-.theme-button .theme-icon-dark, :root[data-theme="dark"] .theme-button .theme-icon-light { display: none; }
-:root[data-theme="dark"] .theme-button .theme-icon-dark { display: block; }
 .notification-dot { position: absolute; top: 7px; right: 7px; width: 5px; height: 5px; border: 1px solid white; border-radius: 50%; background: #ed8e73; }
 .button { display: inline-flex; min-height: 36px; align-items: center; justify-content: center; gap: 8px; padding: 0 15px; border: 1px solid transparent; border-radius: 8px; font-size: 11px; font-weight: 600; transition: transform .18s, background .18s, box-shadow .18s; }
 .button:hover { transform: translateY(-1px); }
