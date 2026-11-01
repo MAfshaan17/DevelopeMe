@@ -11,6 +11,7 @@ const THEME_KEY = "prepwise.theme.v1";
 const TIMER_KEY = "prepwise.timer.v1";
 const FOCUS_DURATION_KEY = "prepwise.focus-duration.v1";
 const MARKS_KEY = "prepwise.marks.v1";
+const SEMESTER_FIVE_MARKS_KEY = "prepwise.semester-five-marks.v1";
 const COLLEGE_EVENTS = [
   ["2026-08-31", "2026-08-31", "Classes begin", "Semester V classes commence."],
   ["2026-09-01", "2026-09-03", "Department registration", "Submit the signed registration form to the department."],
@@ -72,7 +73,7 @@ const DAILY_REALITY_CHECKS = [
   "Confidence comes from repetitions. Put in a few fundamentals today so interviews feel less unfamiliar later.",
   "Engineering is also how you work with people. Keep your word, communicate clearly, and help someone—then put in one focused study session."
 ];
-const CSBS_CURRICULUM = [
+const My Status = [
   {
     semester: 1,
     sourcePage: 35,
@@ -322,6 +323,15 @@ function isMarkEntry(entry) {
     && typeof entry.date === "string";
 }
 
+function isSemesterFiveMarkEntry(entry) {
+  if (!entry || typeof entry.id !== "string" || entry.semester !== 5 || typeof entry.courseCode !== "string" || typeof entry.courseName !== "string") return false;
+  return [
+    [entry.cie1, 30],
+    [entry.cie2, 30],
+    [entry.event, 20]
+  ].every(([score, maximum]) => score === null || (Number.isFinite(score) && score >= 0 && score <= maximum));
+}
+
 const savedTimer = readSavedTimer();
 
 const state = {
@@ -329,6 +339,7 @@ const state = {
   subjects: readCollection(SUBJECTS_KEY, (subject) => subject && typeof subject.id === "string" && typeof subject.name === "string" && typeof subject.progress === "number", "Saved subjects are not valid."),
   sessions: readCollection(SESSIONS_KEY, (session) => session && typeof session.date === "string" && typeof session.minutes === "number", "Saved focus sessions are not valid."),
   marks: readCollection(MARKS_KEY, isMarkEntry, "Saved marks are not valid."),
+  semesterFiveMarks: readCollection(SEMESTER_FIVE_MARKS_KEY, isSemesterFiveMarkEntry, "Saved Semester V marks are not valid."),
   filter: "all",
   currentView: "overview",
   currentSemester: 5,
@@ -370,6 +381,10 @@ function persistSessions() {
 
 function persistMarks() {
   persist(MARKS_KEY, state.marks, "marks");
+}
+
+function persistSemesterFiveMarks() {
+  persist(SEMESTER_FIVE_MARKS_KEY, state.semesterFiveMarks, "Semester V marks");
 }
 
 
@@ -553,15 +568,12 @@ function renderTranscriptResult(semesterNumber) {
         </tr>`).join("")}</tbody>
     </table></div>
     <div class="marks-evaluation">
-      <div><span class="section-eyebrow">WHAT TO WORK ON</span><p>${semesterNumber === 3
-        ? `Your lowest grade points were in ${priorities.map((course) => escapeHtml(course.name)).join(" and ")}. Give these first priority in your revision.`
-        : `Your C grades are in ${result.courses.filter((course) => course.points === 7).map((course) => escapeHtml(course.name)).join(", ")}. These are the clearest next targets.`}</p></div>
-      <div><span class="section-eyebrow">WHAT'S GOING WELL</span><p>${strengths.length
-        ? `Strong results in ${strengths.map((course) => `${escapeHtml(course.name)} (${escapeHtml(course.grade)})`).join(" and ")}. Keep those habits going.`
+      <div><span class="section-eyebrow">CARRY FORWARD</span><p>Use a steady practice rhythm this semester: review technical topics shortly after class and begin CIE preparation early.</p></div>
+      <div><span class="section-eyebrow">WHAT WORKED WELL</span><p>${strengths.length
+        ? `You earned strong grades in ${strengths.map((course) => `${escapeHtml(course.name)} (${escapeHtml(course.grade)})`).join(" and ")}. Carry the habits behind those results into your current courses.`
         : "Keep building steady revision habits across your courses."}</p></div>
     </div>
-    <div class="marks-action-list">${(semesterNumber === 3 ? priorities : result.courses.filter((course) => course.points === 7)).map((course) => `
-      <div class="marks-action-row"><span><strong>${escapeHtml(course.name)}</strong><small>${escapeHtml(course.grade)} · ${course.points.toFixed(1)} grade points</small></span><button class="button button-quiet" type="button" data-plan-mark-course="${escapeHtml(course.name)}">Plan a study session</button></div>`).join("")}</div>`;
+    `;
 }
 
 function renderManualMarks(semesterNumber) {
@@ -601,26 +613,60 @@ function renderManualMarks(semesterNumber) {
     <button class="button button-quiet marks-add-another" type="button" data-add-mark>Add another score <span>+</span></button>`;
 }
 
-function renderPreviousPerformanceSummary() {
-  const semester3 = TRANSCRIPT_RESULTS[3];
-  const semester4 = TRANSCRIPT_RESULTS[4];
-  const change = semester4.sgpa - semester3.sgpa;
-  return `<section class="marks-history-insight">
-    <div class="marks-summary-grid">
-      <div class="marks-stat"><span>Sem III SGPA</span><strong>${semester3.sgpa.toFixed(2)}</strong></div>
-      <div class="marks-stat"><span>Sem IV SGPA</span><strong>${semester4.sgpa.toFixed(2)}</strong></div>
-      <div class="marks-stat"><span>Current CGPA</span><strong>${semester4.cgpa.toFixed(2)}</strong></div>
-      <div class="marks-stat marks-trend"><span>SGPA improvement</span><strong>+${change.toFixed(2)} points</strong></div>
-    </div>
-    <div class="marks-evaluation">
-      <div><span class="section-eyebrow">PRIORITY FROM SEM III</span><p>Object Oriented Programming and Computational Statistics were your lowest results (D, 5 grade points). Start your improvement plan with these two.</p></div>
-      <div><span class="section-eyebrow">SEM IV STRENGTHS</span><p>You earned A grades in Database Management Systems and Operations Research, and an S in Business Communication and Value Science III.</p></div>
-    </div>
-    <div class="marks-action-list">
-      <div class="marks-action-row"><span><strong>Object Oriented Programming</strong><small>Sem III result: D · 5 grade points</small></span><button class="button button-quiet" type="button" data-plan-mark-course="Object Oriented Programming">Plan a study session</button></div>
-      <div class="marks-action-row"><span><strong>Computational Statistics</strong><small>Sem III result: D · 5 grade points</small></span><button class="button button-quiet" type="button" data-plan-mark-course="Computational Statistics">Plan a study session</button></div>
-    </div>
-  </section>`;
+function renderSemesterFiveMarks(semester) {
+  const courses = availableMarkCourses(semester);
+  const fields = [
+    { key: "cie1", label: "CIE 1", maximum: 30 },
+    { key: "cie2", label: "CIE 2", maximum: 30 },
+    { key: "event", label: "Event", maximum: 20 }
+  ];
+  const values = new Map(state.semesterFiveMarks.map((entry) => [entry.courseCode, entry]));
+  let enteredCount = 0;
+  let enteredScore = 0;
+  let enteredMaximum = 0;
+  state.semesterFiveMarks.forEach((entry) => fields.forEach((field) => {
+    if (entry[field.key] !== null) {
+      enteredCount += 1;
+      enteredScore += entry[field.key];
+      enteredMaximum += field.maximum;
+    }
+  }));
+  const summary = `<div class="marks-summary-grid">
+    <div class="marks-stat"><span>Marks entered</span><strong>${enteredCount} ${enteredCount === 1 ? "score" : "scores"}</strong></div>
+    <div class="marks-stat"><span>Combined entered marks</span><strong>${enteredScore} / ${enteredMaximum || "—"}</strong></div>
+    <div class="marks-stat"><span>Personal target per course</span><strong>64 / 80</strong></div>
+  </div>`;
+  const cards = courses.map((course) => {
+    const saved = values.get(course.code) || { cie1: null, cie2: null, event: null };
+    const entered = fields.filter((field) => saved[field.key] !== null);
+    const completed = entered.length === fields.length;
+    const total = entered.reduce((sum, field) => sum + saved[field.key], 0);
+    const targetMisses = entered.filter((field) => saved[field.key] < field.maximum * 0.8);
+    const status = !entered.length ? "No marks entered" : !completed ? `${entered.length} of 3 marks entered` : targetMisses.length ? "Review this course" : "On target";
+    const statusClass = !entered.length ? "unscored" : targetMisses.length ? "needs-work" : "on-track";
+    return `<article class="semester-mark-course ${statusClass}" data-semester-mark-course="${escapeHtml(course.code)}">
+      <div class="semester-mark-heading"><div><span class="marks-course-code">${escapeHtml(course.code)}</span><h3>${escapeHtml(course.name)}</h3></div><span class="marks-status-pill">${status}</span></div>
+      <div class="semester-mark-inputs">${fields.map((field) => `<label class="semester-mark-field"><span>${field.label}<small> / ${field.maximum}</small></span><input class="text-input" type="number" min="0" max="${field.maximum}" step="0.5" inputmode="decimal" data-semester-mark-part="${field.key}" value="${saved[field.key] === null ? "" : saved[field.key]}" placeholder="-" aria-label="${escapeHtml(course.name)} ${field.label}, out of ${field.maximum}"></label>`).join("")}</div>
+      <div class="semester-mark-footer"><span>${entered.length ? `${total} / ${entered.reduce((sum, field) => sum + field.maximum, 0)} entered so far` : "Enter your marks when you receive them"}</span><div><button class="text-button" type="button" data-plan-mark-course="${escapeHtml(course.name)}">Plan a review</button><button class="button button-quiet" type="button" data-save-semester-marks="${escapeHtml(course.code)}">Save marks</button></div></div>
+    </article>`;
+  }).join("");
+  return `<section class="semester-five-marks" id="semester-five-marks"><div class="semester-five-score-summary">${summary}</div>
+    <p class="marks-source-note">Enter each CIE score out of 30 and Event score out of 20. Personal target: 24/30 per CIE and 16/20 for the Event (64/80 total). These are study goals, not your university pass formula. Blank scores remain unentered.</p>
+    <div class="semester-mark-grid">${cards}</div></section>`;
+}
+
+function renderSemesterFivePlan() {
+  return `<div class="score-plan-grid">
+    <article class="score-plan-card"><span class="section-eyebrow">THIS SEMESTER · PRIORITY</span><h3>ADA and Compiler Design</h3><p>Give these problem-solving courses first place in your weekly plan. Do two 25-minute practice blocks per course each week: solve questions without notes, then review mistakes.</p><button class="text-button" type="button" data-plan-mark-course="Design and Analysis of Algorithms">Plan an ADA practice session →</button><button class="text-button" type="button" data-plan-mark-course="Compiler Design">Plan a Compiler Design session →</button></article>
+    <article class="score-plan-card"><span class="section-eyebrow">THIS SEMESTER · CIE + EVENT</span><h3>Prepare in small steps</h3><p>After each class, spend 10 minutes recalling the main idea. Before each CIE, do one timed practice set. Start Event work early and check its rubric before preparing your submission.</p><div class="score-targets"><span>CIE 1 <strong>24 / 30</strong></span><span>CIE 2 <strong>24 / 30</strong></span><span>Event <strong>16 / 20</strong></span></div></article>
+    <article class="score-plan-card next-semester-plan"><span class="section-eyebrow">NEXT SEMESTER · START STRONG</span><h3>Set up your system in Week 1</h3><p>When the official Sem VI courses and assessment scheme are available, add each course and its CIE / Event dates. Review after every class, book two weekly focus blocks for the hardest course, and start test practice at least two weeks before each CIE.</p><p class="score-plan-footnote">Sem VI course names and marks scheme are not included here, so this plan stays general until the official details are known.</p></article>
+  </div>`;
+}
+
+function renderLegacyMarks(semesterNumber) {
+  const entries = state.marks.filter((entry) => entry.semester === semesterNumber).sort((first, second) => second.date.localeCompare(first.date));
+  if (!entries.length) return "";
+  return `<div class="legacy-mark-history"><h3>Previously saved assessment scores</h3><div class="marks-table-wrap"><table class="marks-table manual-marks-table"><thead><tr><th>Course</th><th>Assessment</th><th>Score</th><th>Date</th><th></th></tr></thead><tbody>${entries.map((entry) => `<tr><td><span class="marks-course-code">${escapeHtml(entry.courseCode)}</span><strong>${escapeHtml(entry.courseName)}</strong></td><td>${escapeHtml(entry.assessment)}</td><td>${entry.score} / ${entry.outOf}</td><td>${escapeHtml(entry.date)}</td><td><button class="mark-delete-button" type="button" data-delete-mark="${escapeHtml(entry.id)}">Remove</button></td></tr>`).join("")}</tbody></table></div></div>`;
 }
 
 function renderMarksCard(semester) {
@@ -628,10 +674,15 @@ function renderMarksCard(semester) {
   const title = document.getElementById("marks-card-title");
   title.textContent = `Semester ${["I", "II", "III", "IV", "V"][semester.semester - 1]} marks card`;
   document.getElementById("marks-card-subtitle").textContent = result
-    ? "Your result sheet plus a clear view of strengths and improvement areas."
-    : "Add your test and assessment scores as you receive them.";
-  const pastPerformance = semester.semester === 5 ? renderPreviousPerformanceSummary() : "";
-  document.getElementById("marks-card-body").innerHTML = `${result ? renderTranscriptResult(semester.semester) : pastPerformance}${renderManualMarks(semester.semester)}`;
+    ? "Your result-sheet grades and grade points. Use them as context for your current study plan."
+    : semester.semester === 5
+      ? "Track both CIE scores and your Event score for each course; use your results to guide the next study block."
+      : "Add your test and assessment scores as you receive them.";
+  document.getElementById("marks-card-body").innerHTML = result
+    ? `${renderTranscriptResult(semester.semester)}${renderLegacyMarks(semester.semester)}`
+    : semester.semester === 5
+      ? `${renderSemesterFivePlan()}${renderSemesterFiveMarks(semester)}${renderLegacyMarks(semester.semester)}`
+      : renderManualMarks(semester.semester);
 }
 
 function openMarksDialog() {
@@ -1435,7 +1486,36 @@ document.addEventListener("click", (event) => {
   }
   const editSubject = target.closest("[data-edit-subject]");
   if (editSubject) openSubjectDialog(editSubject.dataset.editSubject);
-  if (target.closest("[data-add-mark]")) openMarksDialog();
+  if (target.closest("[data-add-mark]")) {
+    if (state.currentSemester === 5) {
+      document.getElementById("semester-five-marks")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    } else openMarksDialog();
+  }
+  const saveSemesterMarks = target.closest("[data-save-semester-marks]");
+  if (saveSemesterMarks) {
+    const courseCode = saveSemesterMarks.dataset.saveSemesterMarks;
+    const card = saveSemesterMarks.closest("[data-semester-mark-course]");
+    const fields = [...card.querySelectorAll("[data-semester-mark-part]")];
+    const values = Object.fromEntries(fields.map((field) => [field.dataset.semesterMarkPart, field.value.trim() === "" ? null : Number(field.value)]));
+    const limits = { cie1: 30, cie2: 30, event: 20 };
+    const invalid = Object.entries(values).some(([key, value]) => value !== null && (!Number.isFinite(value) || value < 0 || value > limits[key]));
+    if (invalid) {
+      showToast("CIE marks must be 0–30 and Event marks 0–20.");
+      return;
+    }
+    const courseName = card.querySelector(".semester-mark-heading h3").textContent;
+    const existing = state.semesterFiveMarks.find((entry) => entry.courseCode === courseCode);
+    const hasScores = Object.values(values).some((value) => value !== null);
+    if (!hasScores && !existing) {
+      showToast("Enter at least one score before saving.");
+      return;
+    }
+    state.semesterFiveMarks = state.semesterFiveMarks.filter((entry) => entry.courseCode !== courseCode);
+    if (hasScores) state.semesterFiveMarks.push({ id: courseCode, semester: 5, courseCode, courseName, ...values });
+    persistSemesterFiveMarks();
+    renderCurriculum();
+    showToast(hasScores ? `${courseName} marks saved.` : `${courseName} marks cleared.`);
+  }
   const planMark = target.closest("[data-plan-mark-course]");
   if (planMark) openTaskDialog(planMark.dataset.planMarkCourse, `Review ${planMark.dataset.planMarkCourse} and solve practice questions`);
   const deleteMark = target.closest("[data-delete-mark]");
